@@ -1,11 +1,11 @@
 import networkx
 
+from preprocessing import read_data_file
+
 
 def main():
     # Call to file and function to read data.
-
-    # 
-    pass
+    read_data_file()
 
 
 if __name__ == "__main__":
