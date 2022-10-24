@@ -1,6 +1,10 @@
 import json
 import os
+import re
 
+import networkx as nx
+import matplotlib.pyplot as plt
+import matplotlib.pylab as pl
 
 # Reads the data from the structure.json file.
 # TODO how to save the data to get the full correct structure?
