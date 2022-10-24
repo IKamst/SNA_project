@@ -1,4 +1,5 @@
-import networkx
+import networkx as nx
+import matplotlib.pyplot as plt
 
 from preprocessing import read_data_file
 
