@@ -11,6 +11,7 @@ import matplotlib.pylab as pl
 # TODO input to save files for rumour and non-rumour?
 def read_data_file(graph):
     # Get the current working directory and ensure we are on the correct path.
+    bigdictionary = {}
     wd = os.getcwd()
     print("Current working directory: {0}".format(wd))
     path = wd + '/charliehebdo-all-rnr-threads/non-rumours'
@@ -32,14 +33,26 @@ def read_data_file(graph):
                         print(data)
                         for key in data:
                             graph = determine_nodes_and_edges(graph, key, data[key])
+                            bigdictionary[key] = data
+                            while not data:
+                                data = bigdictionary[key]
+                                bigdictionary[data] = data
                         # Closing file
                         f.close()
     graph.add_weighted_edges_from([(553187282295877632, 553187515671138305, 1)])
     print(graph)
     pos = nx.random_layout(graph)
-    nx.draw_networkx_nodes(graph, pos)
-    plt.savefig("graph.png")
+    nx.draw_networkx(graph, pos, node_size=10, arrowsize=5, with_labels=False)
+    #plt.savefig("graph.png")
     plt.show()
+
+    graph2 = nx.DiGraph(bigdictionary)
+    print(bigdictionary)
+    print(graph2)
+    nx.draw_networkx(graph2, pos, node_size=5, arrowsize=1, with_labels=False)
+
+    plt.show()
+
 
 #check if weight exists, if so add 1 to the weight (weight increases with interaction between two users)
 
