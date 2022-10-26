@@ -21,6 +21,8 @@ def print_plot_degree_distributions(ax, degrees, graph, label):
     print("Min degree " + label + ": " + str(min_degree))
     max_degree = max(degree_values)
     print("Max degree " + label + ": " + str(max_degree))
+    max_degree_node = {key for key, value in degrees.items() if value == max_degree}
+    print("Max degree vertex " + label + ": " + str(max_degree_node))
     degree_freq= [ 0 for degree in range(max_degree + 1)]
     for value in degree_values:
         degree_freq[value] += 1
@@ -57,9 +59,11 @@ def calculate_metrics(graph):
     # Calculate the number of edges
     n_edges = graph.number_of_edges()
     print("Number of edges: " + str(n_edges))
-    # Calculate the degree distribution
+    # Calculate the degree distribution + degree centrality
     # TODO: make this work for directed graphs
     calculate_degree_distribution(graph)
+    # Calculate the centrality indices
+
 
 # Temporary. Using a simple graph right now.
 if __name__ == "__main__":
