@@ -17,6 +17,8 @@ def print_plot_degree_distributions(ax, degrees, graph, label):
     print("Mean degree " + label + ": " + str(mean_degree))
     median_degree = statistics.median(degree_values)
     print("Median degree " + label + ": " + str(median_degree))
+    min_degree = min(degree_values)
+    print("Min degree " + label + ": " + str(min_degree))
     max_degree = max(degree_values)
     print("Max degree " + label + ": " + str(max_degree))
     degree_freq= [ 0 for degree in range(max_degree + 1)]
@@ -40,13 +42,12 @@ def calculate_degree_distribution(graph):
     total_degrees = dict(graph.degree())
     print_plot_degree_distributions(ax, total_degrees, graph, "total degree")
 
-    # Print the degree distribution
+    # Make the degree distribution plot
     plt.legend(loc="upper left")
     plt.xlabel("Degree")
     plt.ylabel("Frequency")
     plt.title("Degree distribution")
     plt.show()
-
 
 # Calculate relatively simple metrics and measures.
 def calculate_metrics(graph):
