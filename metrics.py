@@ -10,7 +10,7 @@ import statistics
 # connected components and, size of the connected
 # components.
 
-# Print information on degree frequencies and plot the degree frequencies.
+# Print information on degree centrality and plot the degree probabilities.
 def print_plot_degree_distributions(ax, degrees, graph, label):
     degree_values = [degrees.get(vertex, 0) for vertex in graph.nodes()]
     mean_degree = statistics.mean(degree_values)
@@ -32,7 +32,7 @@ def print_plot_degree_distributions(ax, degrees, graph, label):
 
     ax.plot(range(len(degree_prob)), degree_prob, 'o-', label = label)
 
-# Calculate the degree distribution.
+# Calculate the degree distribution and degree centrality.
 # TODO make plot readable (increase font etc)
 def calculate_degree_distribution(graph):
     # Initialise the plot
@@ -66,8 +66,9 @@ def calculate_metrics(graph):
     # Calculate the degree distribution + degree centrality
     # TODO: make this work for directed graphs
     calculate_degree_distribution(graph)
-    # Calculate the centrality indices
-    # Degree centrality was already calculated
+    # Calculate the density
+    density = n_edges / (n_vertices * (n_vertices - 1))
+
 
 
 # Temporary. Using a simple graph right now.
