@@ -7,7 +7,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pl
 
-
+# note: obsolete file. this is used for testing of preprocessing.py
+# TODO: delete this
 
 # testing how to make a graph from a dictionary with only one thing
 def read_data_file(rumourboolpath):

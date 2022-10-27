@@ -3,12 +3,8 @@ import os
 import re
 
 import networkx as nx
-import matplotlib.pyplot as plt
-import matplotlib.pylab as pl
 
 # Reads the data from the structure.json file.
-# TODO how to save the data to get the full correct structure?
-# TODO input to save files for rumour and non-rumour?
 def read_data_file(rumourboolpath):
     bigdictionary = {}
     wd = os.getcwd()
@@ -28,7 +24,7 @@ def read_data_file(rumourboolpath):
                     bigdictionary = dict_append(bigdictionary, newdata)
     out_file = open(wd + "\structures\structure-" + rumourboolpath + ".json", "w")
     json.dump(bigdictionary, out_file, indent="")
-    return
+    return bigdictionary
 
 def create_digraph(dict):
     G = nx.DiGraph(dict)
