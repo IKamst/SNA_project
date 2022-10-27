@@ -10,29 +10,41 @@ import matplotlib.pylab as pl
 
 
 # testing how to make a graph from a dictionary with only one thing
-def read_data_file():
+def read_data_file(rumourboolpath):
     bigdictionary = {}
     wd = os.getcwd()
-    path = wd + '/charliehebdo-all-rnr-threads/non-rumours/552784600502915072'
-
-    for file in os.listdir(path):
-        file_path = os.path.join(path, file)
-        # if os.path.isfile(file_path):
-        if file == "structure.json":
-            f = open(file_path)
-            # Load the data as a dictionary.
-            data = json.load(f)
-            fakedata = {'a':{'c':{}}, 'b':{'c':{'d':{}}, 'a':{}}}
-            #key = '552784600502915072'
-            newdata = dictionary_unfold(data, {})
-            #newdata = nx.from_dict_of_dicts(fakedata,create_using=nx.DiGraph, multigraph_input=False)
-            print(newdata)
-            G = nx.DiGraph(newdata)
-            nx.draw_networkx(G, with_labels=False, node_size=50)
-            plt.savefig("bigdictionarygraph.png")
-            plt.show()
+    path = wd + '\charliehebdo-all-rnr-threads/' + rumourboolpath
+    for directory_name in os.listdir(path):
+        direc_path = os.path.join(path, directory_name)
+        if os.path.isdir(direc_path):
+            # Loop over the files in that directory.
+            for file in os.listdir(direc_path):
+                file_path = os.path.join(direc_path, file)
+                # if os.path.isfile(file_path):
+                if file == "structure.json":
+                    f = open(file_path)
+                    # Load the data as a dictionary.
+                    data = json.load(f)
+                    newdata = dictionary_unfold(data, {})
+                    bigdictionary = dict_append(bigdictionary, newdata)
+    out_file = open("total_structure.json", "w")
+    json.dump(bigdictionary, out_file, indent="")
     return
 
+
+
+def dict_append(dict1, dict2):
+    for key in dict2:
+        if dict1.get(key) is None:
+            dict1[key] = dict2[key]
+        else:
+            if isinstance(dict2[key], list):
+                dict1[key] = dict1[key] + dict2[key]
+                dict1[key] = [*set(dict1[key])]
+            else:
+                print('ERROR not a list')
+                return None
+    return dict1
 
 # given a recursive dictionary of dictionaries,
 def dictionary_unfold(data, big_dictionary):
