@@ -78,7 +78,26 @@ def calculate_network_diameter(graph):
     print("Starting vertices for this diameter: " + str(max_starting_vertices))
     print("Corresponding ending vertices for this diameter: " + str(max_ending_vertices))
 
-# Calculate relatively simple metrics and measures.
+# Determine the connected components and their sizes
+def calculate_connected_components(graph):
+    n_strongly_connected = nx.number_strongly_connected_components(graph)
+    print("Number of strongly connected components: " + str(n_strongly_connected))
+    strongly_connected = [(component, len(component)) for component in sorted(nx.strongly_connected_components(graph))]
+    print("Strongly connected components (with length): "+ str(strongly_connected))
+    mean_strongly_connected = sum(length for _, length in strongly_connected) / n_strongly_connected
+    print("Mean length strongly connected components: "+ str(mean_strongly_connected))
+    max_strongly_connected =max(length for _, length in strongly_connected)
+    print("Max length strongly connected components: " + str(max_strongly_connected))
+    n_weakly_connected = nx.number_weakly_connected_components(graph)
+    print("Number of weakly connected components: " + str(n_weakly_connected))
+    weakly_connected = [(component, len(component)) for component in sorted(nx.weakly_connected_components(graph))]
+    print("Weakly connected components (with length): " + str(weakly_connected))
+    mean_weakly_connected = sum(length for _, length in weakly_connected) / n_weakly_connected
+    print("Mean length weakly connected components: "+ str(mean_weakly_connected))
+    max_weakly_connected = max(length for _, length in weakly_connected)
+    print("Max length weakly connected components: " + str(max_weakly_connected))
+
+# Calculate metrics and measures.
 def calculate_metrics(graph):
     # Calculate the number of vertices
     n_vertices = graph.number_of_nodes()
@@ -88,17 +107,20 @@ def calculate_metrics(graph):
     print("Number of edges: " + str(n_edges))
     # Calculate the degree distribution + degree centrality
     calculate_degree_distribution(graph)
+    # Calculate other centralities
     # Calculate the density
     density = nx.density(graph)
     print("Density: " + str(density))
     # Calculate the network diameter
     calculate_network_diameter(graph)
-
+    # Determine the connected components and their size
+    calculate_connected_components(graph)
 
 
 
 
 # Temporary. Using a simple graph right now.
+# TODO: use actual graph
 if __name__ == "__main__":
     simple_graph = nx.DiGraph()
     weighted_edge_list = [(u, v, random.random()) for u, v in itertools.permutations(range(4), 2)]
