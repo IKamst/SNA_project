@@ -10,16 +10,16 @@ import matplotlib.pylab as pl
 
 
 # testing how to make a graph from a dictionary with only one thing
-def read_data_file():
+def read_data_file(rumourboolpath):
     bigdictionary = {}
     wd = os.getcwd()
-    path = wd + '/charliehebdo-all-rnr-threads/non-rumours'
+    path = wd + '\charliehebdo-all-rnr-threads/' + rumourboolpath
     for directory_name in os.listdir(path):
-        path = os.path.join(path, directory_name)
-        if os.path.isdir(path):
+        direc_path = os.path.join(path, directory_name)
+        if os.path.isdir(direc_path):
             # Loop over the files in that directory.
-            for file in os.listdir(path):
-                file_path = os.path.join(path, file)
+            for file in os.listdir(direc_path):
+                file_path = os.path.join(direc_path, file)
                 # if os.path.isfile(file_path):
                 if file == "structure.json":
                     f = open(file_path)
@@ -27,11 +27,11 @@ def read_data_file():
                     data = json.load(f)
                     newdata = dictionary_unfold(data, {})
                     bigdictionary = dict_append(bigdictionary, newdata)
-    G = nx.DiGraph(bigdictionary)
-    nx.draw_networkx(G, with_labels=False, node_size=5)
-    plt.savefig("bigdictionarygraph.png")
-    plt.show()
+    out_file = open("total_structure.json", "w")
+    json.dump(bigdictionary, out_file, indent="")
     return
+
+
 
 def dict_append(dict1, dict2):
     for key in dict2:

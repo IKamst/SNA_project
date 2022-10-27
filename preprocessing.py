@@ -9,52 +9,38 @@ import matplotlib.pylab as pl
 # Reads the data from the structure.json file.
 # TODO how to save the data to get the full correct structure?
 # TODO input to save files for rumour and non-rumour?
-def read_data_file(graph):
-    # Get the current working directory and ensure we are on the correct path.
+def read_data_file(rumourboolpath):
     bigdictionary = {}
     wd = os.getcwd()
-    fakedata1 = {'a': ['b','c'], 'b': ['c'], 'd':['a']}
-    fakedata2 = {'d': ['b'], 'c': ['d']}
-    print("Current working directory: {0}".format(wd))
-    path = wd + '/charliehebdo-all-rnr-threads/non-rumours'
+    path = wd + '\charliehebdo-all-rnr-threads/' + rumourboolpath
     print(path)
-    # Loop over the directories for that path.
     for directory_name in os.listdir(path):
-        directory = os.path.join(path, directory_name)
-        if os.path.isdir(directory):
-            print("DIRECTORY" + directory)
+        direc_path = os.path.join(path, directory_name)
+        print(direc_path)
+        if os.path.isdir(direc_path):
             # Loop over the files in that directory.
-            for file in os.listdir(directory):
-                file_path = os.path.join(directory, file)
-                if os.path.isfile(file_path):
-                    # Open the file if it contains the structure of the tweets.
-                    if file == "structure.json":
-                        f = open(file_path)
-                        # Load the data as a dictionary.
-                        data = json.load(f)
-                        print(data)
-                        for key in data:
-                            graph = determine_nodes_and_edges(graph, key, data[key])
-                            bigdictionary[key] = data
-                            while not data:
-                                data = bigdictionary[key]
-                                bigdictionary[data] = data
-                        # Closing file
-                        f.close()
-    graph.add_weighted_edges_from([(553187282295877632, 553187515671138305, 1)])
-    print(graph)
-    pos = nx.random_layout(graph)
-    nx.draw_networkx(graph, pos, node_size=10, arrowsize=5, with_labels=False)
-    #plt.savefig("graph.png")
-    plt.show()
+            for file in os.listdir(direc_path):
+                file_path = os.path.join(direc_path, file)
+                # if os.path.isfile(file_path):
+                if file == "structure.json":
+                    print('structure is reached.')
+                    print(file_path)
+                    f = open(file_path)
+                    # Load the data as a dictionary.
+                    data = json.load(f)
+                    newdata = dictionary_unfold(data, {})
+                    bigdictionary = dict_append(bigdictionary, newdata)
+    out_file = open("structure-" + rumourboolpath + ".json", "w")
+    json.dump(bigdictionary, out_file, indent="")
+    return
 
-    graph2 = nx.DiGraph(bigdictionary)
-    print(bigdictionary)
-    print(graph2)
-    nx.draw_networkx(graph2, pos, node_size=5, arrowsize=1, with_labels=False)
-
-    plt.show()
-
+def create_digraph(dict):
+    G = nx.DiGraph(dict)
+    # pos = nx.random_layout(G)
+    # nx.draw_networkx(G, pos, with_labels=False, node_size=5)
+    # plt.savefig("bigdictionarygraph.png")
+    # plt.show()
+    return G
 
 # given a recursive dictionary of dictionaries,
 def dictionary_unfold(data, big_dictionary):
@@ -77,6 +63,22 @@ def dictionary_unfold(data, big_dictionary):
                 big_dictionary[key] = [*set((big_dictionary[key]))]  # remove doubles
             big_dictionary = dictionary_unfold(data[key], big_dictionary)
         return big_dictionary
+
+
+# appends two dictionaries of lists
+# for both dict1 and dict2 of type with lists as value
+def dict_append(dict1, dict2):
+    for key in dict2:
+        if dict1.get(key) is None:
+            dict1[key] = dict2[key]
+        else:
+            if isinstance(dict2[key], list):
+                dict1[key] = dict1[key] + dict2[key]
+                dict1[key] = [*set(dict1[key])]
+            else:
+                print('ERROR not a list')
+                return None
+    return dict1
 
 def determine_nodes_and_edges(graph, main_node, values):
     # Prints the source tweet.
