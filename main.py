@@ -8,25 +8,25 @@ testbool=True
 
 def main():
     # Call to file and function to read data.
-        # nonrumour_dict = read_data_file('non-rumours')
-        # rumour_dict = read_data_file('rumours')
+    nonrumour_dict = read_data_file('non-rumours')
+    rumour_dict = read_data_file('rumours')
     wd = getcwd()
 
-    nrf = open(wd + '\structure-non-rumours.json')
+    nrf = open(wd + '\structures\structure-non-rumours.json')
     nrdata = load(nrf)
     nonrumourgraph = create_digraph(nrdata)
     print(nonrumourgraph)
 
-    rf = open(wd + '\structure-rumours.json')
+    rf = open(wd + '\structures\structure-rumours.json')
     rdata = load(rf)
     rumourgraph = create_digraph(rdata)
     print(rumourgraph)
 
-        # full_dict = dict_append(nrdata, rdata)
-        # fullgraph = create_digraph(full_dict)
-        # out_file = open("structure-full-dictionary" + ".json", "w")
-        # dump(full_dict, out_file, indent="")
-        # print(fullgraph)
+    full_dict = dict_append(nrdata, rdata)
+    fullgraph = create_digraph(full_dict)
+    out_file = open(wd + "\structures\structure-full-dictionary" + ".json", "w")
+    dump(full_dict, out_file, indent="")
+    print(fullgraph)
 
 
 
