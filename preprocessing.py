@@ -54,8 +54,27 @@ def read_data_file(graph):
     plt.show()
 
 
-#check if weight exists, if so add 1 to the weight (weight increases with interaction between two users)
-
+# given a recursive dictionary of dictionaries,
+def dictionary_unfold(data, big_dictionary):
+    #base case
+    if isinstance(data,list):
+        return big_dictionary
+    else:
+        #loop over all the keys in data
+        for key, value in data.items():
+            # check if the key already exists
+            if big_dictionary.get(key) is None:
+                # only keep "first level entries" of the dict in the value
+                if not isinstance(data[key], list): #when data[key] = []
+                    big_dictionary[key] = list(data[key].keys())
+                else:
+                     big_dictionary[key] = data[key]
+            else:
+                # if the key already exists, add to value
+                big_dictionary[key] = big_dictionary[key] + list(data[key].keys()) # append the existing list
+                big_dictionary[key] = [*set((big_dictionary[key]))]  # remove doubles
+            big_dictionary = dictionary_unfold(data[key], big_dictionary)
+        return big_dictionary
 
 def determine_nodes_and_edges(graph, main_node, values):
     # Prints the source tweet.

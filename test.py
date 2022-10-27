@@ -13,26 +13,37 @@ import matplotlib.pylab as pl
 def read_data_file():
     bigdictionary = {}
     wd = os.getcwd()
-    path = wd + '/charliehebdo-all-rnr-threads/non-rumours/552784600502915072'
+    path = wd + '/charliehebdo-all-rnr-threads/non-rumours'
 
-    for file in os.listdir(path):
-        file_path = os.path.join(path, file)
-        # if os.path.isfile(file_path):
-        if file == "structure.json":
-            f = open(file_path)
-            # Load the data as a dictionary.
-            data = json.load(f)
-            fakedata = {'a':{'c':{}}, 'b':{'c':{'d':{}}, 'a':{}}}
-            #key = '552784600502915072'
-            newdata = dictionary_unfold(data, {})
-            #newdata = nx.from_dict_of_dicts(fakedata,create_using=nx.DiGraph, multigraph_input=False)
-            print(newdata)
-            G = nx.DiGraph(newdata)
-            nx.draw_networkx(G, with_labels=False, node_size=50)
-            plt.savefig("bigdictionarygraph.png")
-            plt.show()
+    for directory_name in os.listdir(path):
+        path = os.path.join(path, directory_name)
+        if os.path.isdir(path):
+            # Loop over the files in that directory.
+            for file in os.listdir(path):
+                file_path = os.path.join(path, file)
+                # if os.path.isfile(file_path):
+                if file == "structure.json":
+                    f = open(file_path)
+                    # Load the data as a dictionary.
+                    data = json.load(f)
+                    newdata = dictionary_unfold(data, {})
+                    bigdictionary = dict_append(bigdictionary, newdata)
+    G = nx.DiGraph(bigdictionary)
+    nx.draw_networkx(G, with_labels=False, node_size=5)
+    plt.savefig("bigdictionarygraph.png")
+    plt.show()
     return
 
+def dict_append(dict1, dict2):
+    for key in dict2:
+        if dict1.get(key) is None:
+            dict1[key] = dict2[key]
+        else:
+            if isinstance(dict2[key], List):
+                dict1[key] = dict1[key] + dict2[key]
+            else:
+                print('ERROR not a list')
+    return dict1
 
 # given a recursive dictionary of dictionaries,
 def dictionary_unfold(data, big_dictionary):
