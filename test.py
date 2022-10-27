@@ -14,7 +14,6 @@ def read_data_file():
     bigdictionary = {}
     wd = os.getcwd()
     path = wd + '/charliehebdo-all-rnr-threads/non-rumours'
-
     for directory_name in os.listdir(path):
         path = os.path.join(path, directory_name)
         if os.path.isdir(path):
@@ -39,10 +38,12 @@ def dict_append(dict1, dict2):
         if dict1.get(key) is None:
             dict1[key] = dict2[key]
         else:
-            if isinstance(dict2[key], List):
+            if isinstance(dict2[key], list):
                 dict1[key] = dict1[key] + dict2[key]
+                dict1[key] = [*set(dict1[key])]
             else:
                 print('ERROR not a list')
+                return None
     return dict1
 
 # given a recursive dictionary of dictionaries,

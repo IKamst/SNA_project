@@ -13,6 +13,8 @@ def read_data_file(graph):
     # Get the current working directory and ensure we are on the correct path.
     bigdictionary = {}
     wd = os.getcwd()
+    fakedata1 = {'a': ['b','c'], 'b': ['c'], 'd':['a']}
+    fakedata2 = {'d': ['b'], 'c': ['d']}
     print("Current working directory: {0}".format(wd))
     path = wd + '/charliehebdo-all-rnr-threads/non-rumours'
     print(path)
