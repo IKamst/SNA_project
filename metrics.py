@@ -97,6 +97,19 @@ def calculate_connected_components(graph):
     max_weakly_connected = max(length for _, length in weakly_connected)
     print("Max length weakly connected components: " + str(max_weakly_connected))
 
+# Calculate centralities other than the degree centrality
+def calculate_centralities(graph):
+    # Calculate the eigenvector centrality
+    eigenvector_centrality = statistics.mean(list(nx.eigenvector_centrality(graph).values()))
+    print("Mean eigenvector centrality: " + str(eigenvector_centrality))
+    # Calculate the closeness centrality
+    # TODO find out what kind of definition of closeness centrality is used (for report)
+    closeness_centrality = statistics.mean(list(nx.closeness_centrality(graph).values()))
+    print("Mean closeness centrality: " + str(closeness_centrality))
+    # Calculate the betweenness centrality
+    betweenness_centrality = statistics.mean(list(nx.betweenness_centrality(graph).values()))
+    print("Mean betweenness centrality: " + str(betweenness_centrality))
+
 # Calculate metrics and measures.
 def calculate_metrics(graph):
     # Calculate the number of vertices
@@ -108,16 +121,17 @@ def calculate_metrics(graph):
     # Calculate the degree distribution + degree centrality
     calculate_degree_distribution(graph)
     # Calculate other centralities
+    calculate_centralities(graph)
+    # Calculate the clustering coefficient
+    average_clustering = nx.average_clustering(graph)
+    print("Average clustering coefficient: " + str(average_clustering))
+    # Calculate the network diameter
+    calculate_network_diameter(graph)
     # Calculate the density
     density = nx.density(graph)
     print("Density: " + str(density))
-    # Calculate the network diameter
-    calculate_network_diameter(graph)
     # Determine the connected components and their size
     calculate_connected_components(graph)
-
-
-
 
 # Temporary. Using a simple graph right now.
 # TODO: use actual graph
