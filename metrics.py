@@ -55,6 +55,29 @@ def calculate_degree_distribution(graph):
     plt.title("Degree distribution")
     plt.show()
 
+# Calculate the network diameter: the longest shortest path in the network
+def calculate_network_diameter(graph):
+    # First find all shortest paths
+    path_lengths = dict(nx.all_pairs_shortest_path_length(graph))
+    # Loop over the shortest paths and keep track of what starting and ending vertices have the maximum shortest path length
+    max_length = -1
+    max_starting_vertices = []
+    max_ending_vertices = []
+    for starting_vertex, combinations in path_lengths.items():
+        for ending_vertex, length in combinations.items():
+            if length > max_length:
+                max_length = length
+                max_starting_vertices = []
+                max_ending_vertices = []
+                max_starting_vertices.append(starting_vertex)
+                max_ending_vertices.append(ending_vertex)
+            elif length == max_length:
+                max_starting_vertices.append(starting_vertex)
+                max_ending_vertices.append(ending_vertex)
+    print("Network diameter: " + str(max_length))
+    print("Starting vertices for this diameter: " + str(max_starting_vertices))
+    print("Corresponding ending vertices for this diameter: " + str(max_ending_vertices))
+
 # Calculate relatively simple metrics and measures.
 def calculate_metrics(graph):
     # Calculate the number of vertices
@@ -64,10 +87,14 @@ def calculate_metrics(graph):
     n_edges = graph.number_of_edges()
     print("Number of edges: " + str(n_edges))
     # Calculate the degree distribution + degree centrality
-    # TODO: make this work for directed graphs
     calculate_degree_distribution(graph)
     # Calculate the density
-    density = n_edges / (n_vertices * (n_vertices - 1))
+    density = nx.density(graph)
+    print("Density: " + str(density))
+    # Calculate the network diameter
+    calculate_network_diameter(graph)
+
+
 
 
 
