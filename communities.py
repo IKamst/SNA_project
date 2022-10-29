@@ -5,10 +5,12 @@ import random
 import networkx as nx
 import pandas as pd
 from matplotlib import pyplot as plt
-from networkx import find_cliques
+from networkx import find_cliques, bridges
 from networkx.algorithms.community import modularity, girvan_newman
-import seaborn as sns
+from networkx.algorithms.connectivity import bridge_components
 
+
+# Make a plot of the graph. Giving each community different colour in nodes.
 def make_final_plot(graph, communities):
     color_map = []
     get_colours = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
@@ -41,8 +43,7 @@ def girvan_newman_all(graph):
     return best, max_mod
 
 
-def cliques(graph):
-    # TODO ideas on how to plot this?
+def determine_cliques(graph):
     max_cliques = list(find_cliques(graph))
     print("Maximal cliques: " + str(max_cliques))
     nodes = []
@@ -53,33 +54,52 @@ def cliques(graph):
             if node in clique:
                 cnt = cnt + 1
         cnt_cliques.append(cnt)
-        nodes.append(str(nodes))
+        nodes.append(str(node))
     df = pd.DataFrame({"Node": nodes,
                        "Number of cliques": cnt_cliques})
-    df.sort_values("Number of cliques")
+    df.sort_values(by=["Number of cliques"], inplace=True, ascending=False)
+    print(df)
+    print("here")
     plt.figure()
-    sns.barplot(x='Node', y="Number of cliques", data=df)
+    plt.bar(df["Node"][0:20], df["Number of cliques"][0:20])
+    plt.title("Top 20 nodes with most cliques")
+    plt.xlabel("Node")
+    plt.ylabel("Number of cliques")
     plt.show()
     return
 
 
-def main():
-    graph = nx.random_k_out_graph(20, 3, 0.5)
-    nx.draw_networkx(graph)
-    plt.show()
+def determine_bridges(graph):
+    bridges_list = list(bridges(graph))
+    print(bridges_list)
+    if len(bridges_list) > 0:
+        communities = sorted(map(sorted, bridge_components(graph)))
+        make_final_plot(graph, communities)
+    return bridges_list
+
+
+def community_analysis(graph):
     # Create an undirected version of this graph.
     # reciprocal: bool (optional) (if True only keep edges that appear in both directions).
     undirected_graph = graph.to_undirected()
     nx.draw_networkx(undirected_graph)
     plt.show()
     # Find the maximal cliques
-    cliques(undirected_graph)
+    determine_cliques(undirected_graph)
     # Find the best partitioning using Girvan Newman with modularity
     best, max_mod = girvan_newman_all(undirected_graph)
     print("Maximum modularity: " + str(max_mod))
     print("For best communities partitioning: " + str(best))
     make_final_plot(undirected_graph, best)
+    bridges_list = determine_bridges(undirected_graph)
+    # TODO homophily analysis. Need to think of which factors to consider
+    # Homophily is the principle that we tend to be similar to our
+    # friends. -> Intrinsic and contextual
 
 
+# TODO send actual graph to community_analysis()
 if __name__ == "__main__":
-    main()
+    directed_graph = nx.random_k_out_graph(20, 3, 0.5)
+    nx.draw_networkx(directed_graph)
+    plt.show()
+    community_analysis(directed_graph)
