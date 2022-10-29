@@ -1,8 +1,11 @@
+from matplotlib import pyplot as plt
+
 from preprocessing import read_data_file, create_digraph, dict_append
 from metrics import calculate_metrics
 from hits import calculate_hits
 from json import load, dump
 from os import getcwd
+import networkx as nx
 
 def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMOUR, RUMOUR, FULL):
     # Call to file and function to read data.
@@ -48,8 +51,8 @@ def main():
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
         print(g)
-        calculate_metrics(g)
-        calculate_hits(g)
+        # calculate_metrics(g)
+        # calculate_hits(g)
 
 if __name__ == "__main__":
     main()

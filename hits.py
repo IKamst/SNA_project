@@ -8,10 +8,10 @@ def calculate_hits(graph):
     hits = nx.hits(graph)
     hubs = dict(sorted(hits[0].items(), key=lambda item: item[1], reverse = True))
     authorities = dict(sorted(hits[1].items(), key=lambda item: item[1], reverse = True))
-    print("HITS hubs: " + str(list(hubs.items())[:20]))
-    print("HITS authorities: " + str(list(authorities.items())[:20]))
+    print("HITS 20 best scoring hubs: " + str(list(hubs.items())[:20]))
+    print("HITS 20 best scoring authorities: " + str(list(authorities.items())[:20]))
     pagerank = dict(sorted(nx.pagerank(graph).items(), key=lambda item: item[1], reverse = True))
-    print("Pagerank: " + str(list(pagerank.items())[:20]))
+    print("Pagerank 20 best scoring: " + str(list(pagerank.items())[:20]))
 
 # Temporary. Using a simple graph right now.
 # TODO: use actual graph
