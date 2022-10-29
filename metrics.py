@@ -83,7 +83,7 @@ def calculate_connected_components(graph):
     n_strongly_connected = nx.number_strongly_connected_components(graph)
     print("Number of strongly connected components: " + str(n_strongly_connected))
     strongly_connected = [(component, len(component)) for component in sorted(nx.strongly_connected_components(graph))]
-    print("Strongly connected components (with length): "+ str(strongly_connected))
+    print("20 largest strongly connected components (with length): "+ str(strongly_connected[:20]))
     mean_strongly_connected = sum(length for _, length in strongly_connected) / n_strongly_connected
     print("Mean length strongly connected components: "+ str(mean_strongly_connected))
     max_strongly_connected =max(length for _, length in strongly_connected)
@@ -91,7 +91,7 @@ def calculate_connected_components(graph):
     n_weakly_connected = nx.number_weakly_connected_components(graph)
     print("Number of weakly connected components: " + str(n_weakly_connected))
     weakly_connected = [(component, len(component)) for component in sorted(nx.weakly_connected_components(graph))]
-    print("Weakly connected components (with length): " + str(weakly_connected))
+    print("20 largest weakly connected components (with length): " + str(weakly_connected[:20]))
     mean_weakly_connected = sum(length for _, length in weakly_connected) / n_weakly_connected
     print("Mean length weakly connected components: "+ str(mean_weakly_connected))
     max_weakly_connected = max(length for _, length in weakly_connected)
@@ -100,14 +100,16 @@ def calculate_connected_components(graph):
 # Calculate centralities other than the degree centrality
 def calculate_centralities(graph):
     # Calculate the eigenvector centrality
-    eigenvector_centrality = statistics.mean(list(nx.eigenvector_centrality(graph).values()))
+    eigenvector_centrality = statistics.mean(list(nx.eigenvector_centrality(graph, max_iter=600).values()))
     print("Mean eigenvector centrality: " + str(eigenvector_centrality))
     # Calculate the closeness centrality
     # TODO find out what kind of definition of closeness centrality is used (for report)
     closeness_centrality = statistics.mean(list(nx.closeness_centrality(graph).values()))
     print("Mean closeness centrality: " + str(closeness_centrality))
     # Calculate the betweenness centrality
-    betweenness_centrality = statistics.mean(list(nx.betweenness_centrality(graph).values()))
+    # TODO find out what sample of nodes to use (if you do not include k it takes a realllly long time)
+    n_nodes = graph.number_of_nodes()
+    betweenness_centrality = statistics.mean(list(nx.betweenness_centrality(graph, k = int(n_nodes/10)).values()))
     print("Mean betweenness centrality: " + str(betweenness_centrality))
 
 # Calculate metrics and measures.

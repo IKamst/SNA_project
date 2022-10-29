@@ -3,15 +3,15 @@ import random
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# Calculate the HITS and Pagerank scores for all vertices
+# Calculate the HITS and Pagerank scores for all vertices, show the first 20
 def calculate_hits(graph):
     hits = nx.hits(graph)
     hubs = dict(sorted(hits[0].items(), key=lambda item: item[1], reverse = True))
     authorities = dict(sorted(hits[1].items(), key=lambda item: item[1], reverse = True))
-    print("HITS hubs: " + str(hubs))
-    print("HITS authorities: " + str(authorities))
+    print("HITS hubs: " + str(list(hubs.items())[:20]))
+    print("HITS authorities: " + str(list(authorities.items())[:20]))
     pagerank = dict(sorted(nx.pagerank(graph).items(), key=lambda item: item[1], reverse = True))
-    print("Pagerank: " + str(pagerank))
+    print("Pagerank: " + str(list(pagerank.items())[:20]))
 
 # Temporary. Using a simple graph right now.
 # TODO: use actual graph

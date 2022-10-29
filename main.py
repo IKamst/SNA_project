@@ -1,5 +1,6 @@
 from preprocessing import read_data_file, create_digraph, dict_append
 from metrics import calculate_metrics
+from hits import calculate_hits
 from json import load, dump
 from os import getcwd
 
@@ -48,6 +49,7 @@ def main():
     else:
         print(g)
         calculate_metrics(g)
+        calculate_hits(g)
 
 if __name__ == "__main__":
     main()
