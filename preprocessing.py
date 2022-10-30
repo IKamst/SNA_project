@@ -8,7 +8,7 @@ import networkx as nx
 def read_data_file(rumourboolpath):
     bigdictionary = {}
     wd = os.getcwd()
-    path = wd + '\germanwings-crash-all-rnr-threads/' + rumourboolpath
+    path = wd + '/germanwings-crash-all-rnr-threads/' + rumourboolpath
     for directory_name in os.listdir(path):
         direc_path = os.path.join(path, directory_name)
         if os.path.isdir(direc_path):
@@ -22,7 +22,7 @@ def read_data_file(rumourboolpath):
                     data = json.load(f)
                     newdata = dictionary_unfold(data, {})
                     bigdictionary = dict_append(bigdictionary, newdata)
-    out_file = open(wd + "\structures\structure-" + rumourboolpath + ".json", "w")
+    out_file = open(wd + "/structures/structure-" + rumourboolpath + ".json", "w")
     json.dump(bigdictionary, out_file, indent="")
     return bigdictionary
 

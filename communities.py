@@ -20,7 +20,7 @@ def make_final_plot(graph, communities):
             if node in communities[i]:
                 color_map.append(colours[i])
     plt.figure()
-    nx.draw(graph, node_color=color_map, with_labels=True)
+    nx.draw(graph, node_color=color_map, with_labels=False)
     plt.show()
     return
 
@@ -31,8 +31,8 @@ def girvan_newman_all(graph):
     best_clusters = False
     max_mod = 0
     gn_model = girvan_newman(temp_graph)
-    # TODO determine how many runs
-    limited_runs = itertools.takewhile(lambda c: len(c) <= graph.number_of_nodes(), gn_model)
+    # TODO determine how many runs. graph.number_of_nodes()
+    limited_runs = itertools.takewhile(lambda c: len(c) <= 20, gn_model)
     for communities in limited_runs:
         print(tuple(sorted(c) for c in communities))
         mod = modularity(graph, communities)
@@ -82,7 +82,7 @@ def community_analysis(graph):
     # Create an undirected version of this graph.
     # reciprocal: bool (optional) (if True only keep edges that appear in both directions).
     undirected_graph = graph.to_undirected()
-    nx.draw_networkx(undirected_graph)
+    nx.draw_networkx(undirected_graph, with_labels=False, node_size = 50)
     plt.show()
     # Find the maximal cliques
     determine_cliques(undirected_graph)

@@ -14,7 +14,7 @@ import matplotlib.pylab as pl
 def read_data_file(rumourboolpath):
     bigdictionary = {}
     wd = os.getcwd()
-    path = wd + '\charliehebdo-all-rnr-threads/' + rumourboolpath
+    path = wd + 'charliehebdo-all-rnr-threads/' + rumourboolpath
     for directory_name in os.listdir(path):
         direc_path = os.path.join(path, directory_name)
         if os.path.isdir(direc_path):
