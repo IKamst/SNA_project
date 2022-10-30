@@ -8,7 +8,7 @@ import networkx as nx
 def read_data_file(rumourboolpath):
     bigdictionary = {}
     wd = os.getcwd()
-    path = wd + '\charliehebdo-all-rnr-threads/' + rumourboolpath
+    path = wd + '\germanwings-crash-all-rnr-threads/' + rumourboolpath
     for directory_name in os.listdir(path):
         direc_path = os.path.join(path, directory_name)
         if os.path.isdir(direc_path):
@@ -77,7 +77,6 @@ def determine_nodes_and_edges(graph, main_node, values):
     print(main_node)
     graph.add_node(main_node)
     # Prints the tweets linked to the source tweet and their inner structure.
-    # TODO how to get the structure if tweets continue further?
     print(values)
     out = re.split(r"[:|,]", str(values))
     print(out)
