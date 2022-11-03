@@ -1,5 +1,12 @@
+from matplotlib import pyplot as plt
+
+from communities import community_analysis
+from preprocessing import read_data_file, create_digraph, dict_append
+from metrics import calculate_metrics
+from hits import calculate_hits
 from json import load, dump
 from os import getcwd
+import networkx as nx
 
 from communities import community_analysis
 from hits import calculate_hits
@@ -52,6 +59,12 @@ def main():
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
         print(g)
+        nx.draw_networkx(g, node_size=20, with_labels=False)
+        plt.title("Directed version of the network")
+        plt.show()
+        calculate_metrics(g)
+        calculate_hits(g)
+        community_analysis(g)
         # calculate_metrics(g)
         # calculate_hits(g)
         # community_analysis(g)

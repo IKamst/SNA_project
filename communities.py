@@ -11,7 +11,7 @@ from networkx.algorithms.connectivity import bridge_components
 
 
 # Make a plot of the graph. Giving each community different colour in nodes.
-def make_final_plot(graph, communities):
+def make_final_plot(graph, communities, text):
     color_map = []
     get_colours = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
     colours = get_colours(len(communities))
@@ -20,20 +20,20 @@ def make_final_plot(graph, communities):
             if node in communities[i]:
                 color_map.append(colours[i])
     plt.figure()
-    nx.draw(graph, node_color=color_map, with_labels=False)
+    nx.draw_networkx(graph, node_color=color_map, node_size=20, with_labels=False)
+    plt.title(text)
     plt.show()
     return
 
 
 def girvan_newman_all(graph):
     temp_graph = copy.deepcopy(graph)
-    best = copy.deepcopy(graph)
-    best_clusters = False
+    best = []
     max_mod = 0
     gn_model = girvan_newman(temp_graph)
-    # TODO determine how many runs. graph.number_of_nodes()
-    limited_runs = itertools.takewhile(lambda c: len(c) <= 20, gn_model)
-    for communities in limited_runs:
+    # TODO determine how many communities
+    k = 50
+    for communities in itertools.islice(gn_model, k):
         print(tuple(sorted(c) for c in communities))
         mod = modularity(graph, communities)
         print("Modularity:" + str(mod))
@@ -74,15 +74,21 @@ def determine_bridges(graph):
     print(bridges_list)
     if len(bridges_list) > 0:
         communities = sorted(map(sorted, bridge_components(graph)))
-        make_final_plot(graph, communities)
+        print("Bridge components")
+        print(communities)
+        make_final_plot(graph, communities, "Network coloured by bridge components")
     return bridges_list
 
 
-def community_analysis(graph):
+def community_analysis(graph, ):
     # Create an undirected version of this graph.
     # reciprocal: bool (optional) (if True only keep edges that appear in both directions).
     undirected_graph = graph.to_undirected()
-    nx.draw_networkx(undirected_graph, with_labels=False, node_size = 50)
+    print("Undirected graph:")
+    # TODO does not seem to draw all edges?
+    plt.figure()
+    nx.draw_networkx(undirected_graph, with_labels=False, node_size=30, edgelist=list(undirected_graph.edges()))
+    plt.title("Undirected version of the network")
     plt.show()
     # Find the maximal cliques
     determine_cliques(undirected_graph)
@@ -90,7 +96,7 @@ def community_analysis(graph):
     best, max_mod = girvan_newman_all(undirected_graph)
     print("Maximum modularity: " + str(max_mod))
     print("For best communities partitioning: " + str(best))
-    make_final_plot(undirected_graph, best)
+    make_final_plot(undirected_graph, best, "Network coloured by Girvan Newman communities")
     bridges_list = determine_bridges(undirected_graph)
     # TODO homophily analysis. Need to think of which factors to consider
     # Homophily is the principle that we tend to be similar to our
@@ -100,6 +106,6 @@ def community_analysis(graph):
 # TODO send actual graph to community_analysis()
 if __name__ == "__main__":
     directed_graph = nx.random_k_out_graph(20, 3, 0.5)
-    nx.draw_networkx(directed_graph)
+    nx.draw(directed_graph)
     plt.show()
     community_analysis(directed_graph)
