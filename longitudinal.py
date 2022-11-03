@@ -41,15 +41,13 @@ def create_timeline():
                 # Loop over the files in that directory.
                 for file in os.listdir(direc_path + '/source-tweets'):
                     file_path = os.path.join(direc_path + '/source-tweets', file)
-                    if file == (directory_name + '.json'): #if source
+                    if file == (directory_name + '.json'): #take only the source tweet file
+                        # TODO: make this a list of tuples, including ID
                         times.append(scrap_time_from_file(file_path))
-            for file in os.listdir(direc_path + '/reactions'):
-                    pass
-                    # file_path = os.path.join(direc_path, file)
-                    # if os.path.isfile(file_path):
-                    #     if file == directory_name:
-                    #         dt = scrap_time_from_file(file_path)
-            pass
+                for file in os.listdir(direc_path + '/reactions') :
+                    file_path = os.path.join(direc_path + '/reactions', file)
+                    if '_' not in file:  # only take tweets
+                        times.append(scrap_time_from_file(file_path))
     print(times)
     times = sort_timeline(times)
     dt = scrap_time_from_file(wd + '/germanwings-crash-all-rnr-threads/non-rumours/580319983676313601/reactions/580325737619685377.json')
