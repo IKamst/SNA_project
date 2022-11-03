@@ -1,13 +1,12 @@
-from matplotlib import pyplot as plt
-
-from communities import community_analysis
-from preprocessing import read_data_file, create_digraph, dict_append
-from metrics import calculate_metrics
-from hits import calculate_hits
 from json import load, dump
 from os import getcwd
-import scipy as sp
-import networkx as nx
+
+from communities import community_analysis
+from hits import calculate_hits
+from longitudinal import longitudinal_analysis
+from metrics import calculate_metrics
+from preprocessing import read_data_file, create_digraph, dict_append
+
 
 def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMOUR, RUMOUR, FULL):
     # Call to file and function to read data.
@@ -53,9 +52,10 @@ def main():
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
         print(g)
-        calculate_metrics(g)
-        calculate_hits(g)
-        community_analysis(g)
+        # calculate_metrics(g)
+        # calculate_hits(g)
+        # community_analysis(g)
+        longitudinal_analysis(g)
 
 
 if __name__ == "__main__":
