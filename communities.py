@@ -20,7 +20,7 @@ def make_final_plot(graph, communities, text):
             if node in communities[i]:
                 color_map.append(colours[i])
     plt.figure()
-    nx.draw_networkx(graph, node_color=color_map, node_size=30, with_labels=False)
+    nx.draw_networkx(graph, node_color=color_map, node_size=20, with_labels=False)
     plt.title(text)
     plt.show()
     return
@@ -74,6 +74,8 @@ def determine_bridges(graph):
     print(bridges_list)
     if len(bridges_list) > 0:
         communities = sorted(map(sorted, bridge_components(graph)))
+        print("Bridge components")
+        print(communities)
         make_final_plot(graph, communities, "Network coloured by bridge components")
     return bridges_list
 

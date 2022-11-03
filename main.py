@@ -48,12 +48,12 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
             return create_digraph(fdata)
     return
 def main():
-    g = create_load_structure(False, True, True, True, True)
+    g = create_load_structure(False, True, False, False, True)
     if g is None:
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
         print(g)
-        nx.draw_networkx(g, node_size=30, with_labels=False)
+        nx.draw_networkx(g, node_size=20, with_labels=False)
         plt.title("Directed version of the network")
         plt.show()
         calculate_metrics(g)
