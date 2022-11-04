@@ -2,6 +2,9 @@ from json import load, dump
 import os
 import datetime
 import networkx as nx
+from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.cm import ScalarMappable
+
 from preprocessing import dict_append
 from matplotlib import pyplot as plt
 
@@ -92,9 +95,10 @@ def pick_source_folder():
         if i == 0:
             colormap = '#1f78b4'
         G = G.reverse()
-        pos = nx.random_layout(G)  # TODO iris: make this layout better
+        pos = nx.kamada_kawai_layout(G)
         nx.draw_networkx(G, pos=pos, with_labels=False, node_size=150, node_color=colormap)
-        plt.title('Graph at timestamp ' + str(i))
+        plt.title('Graph at timestamp ' + str(i), fontsize = 18)
+        plt.savefig("longitudinal_" + str(i) + ".png", bbox_inches="tight")
         plt.show()
                     # if within the interval, let it stay in the structure
                 # use "in_reply_to_status_id"
@@ -116,20 +120,26 @@ def graph_from_interval_dict(id):
     graph4 = G.nodes
     for n in G.nodes:
         if n in graph0:
-            colormap.append('blue')
+            colormap.append('#dce4a8')
         if n in graph1 and n not in graph0:
-            colormap.append('pink')
+            colormap.append('#94c099')
         if n in graph2 and n not in graph1:
-            colormap.append('red')
+            colormap.append('#5c998c')
         if n in graph3 and n not in graph2:
-            colormap.append('green')
+            colormap.append('#3a7077')
         if n in graph4 and n not in graph3:
-            colormap.append('yellow')
+            colormap.append('#2a4858')
     G = G.reverse()
-    pos = nx.random_layout(G)  # TODO iris: make this layout better
+    pos = nx.kamada_kawai_layout(G)
     plt.figure()
     nx.draw_networkx(G, pos=pos, with_labels=False, node_size=150, node_color=colormap)
-    plt.title('Longitudinal Graph')
+    plt.title('Longitudinal Graph', fontsize = 18)
+    # ax = plt.subplot()
+    # im = ax.imshow(np.arange(100).reshape((10, 10)))
+    cm = LinearSegmentedColormap.from_list('defcol', ['#dce4a8', '#2a4858'])
+    cb = plt.colorbar(ScalarMappable(cmap=cm, norm=plt.Normalize(0, 5 - 1)), ticks=range(5))
+    cb.set_label(label='Timestamp', fontsize = 15)
+    plt.savefig("longitudinal.png", bbox_inches="tight")
     plt.show()
     return
 

@@ -69,9 +69,9 @@ def main():
         # plt.title("Directed version of the network")
         # plt.show()
         # calculate_metrics(g)
-        calculate_hits(g)
+        # calculate_hits(g)
         # community_analysis(g, positioning)
-        # longitudinal_analysis()
+        longitudinal_analysis()
 
 
 if __name__ == "__main__":

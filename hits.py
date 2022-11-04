@@ -1,9 +1,7 @@
-import itertools
-import random
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
+# Plot the top 20 hits and authorities
 def plot_hits(hubs, authorities):
     plt.figure()
     plt.bar(list(hubs.keys())[:20], list(hubs.values())[:20])
@@ -28,7 +26,7 @@ def plot_hits(hubs, authorities):
     plt.savefig(r'authority_scores_non_r.png', bbox_inches = "tight")
     plt.show()
 
-# Calculate the HITS and Pagerank scores for all vertices, show the first 20
+# Calculate the HITS and Pagerank scores for all vertices, show the first 20 and plot these for the HITS
 def calculate_hits(graph):
     hits = nx.hits(graph)
     hubs = dict(sorted(hits[0].items(), key=lambda item: item[1], reverse = True))
@@ -38,17 +36,3 @@ def calculate_hits(graph):
     plot_hits(hubs, authorities)
     pagerank = dict(sorted(nx.pagerank(graph).items(), key=lambda item: item[1], reverse = True))
     print("Pagerank 20 best scoring: " + str(list(pagerank.items())[:20]))
-
-# Temporary. Using a simple graph right now.
-# TODO: use actual graph
-if __name__ == "__main__":
-    simple_graph = nx.DiGraph()
-    weighted_edge_list = [(u, v, random.random()) for u, v in itertools.permutations(range(4), 2)]
-    simple_graph.add_weighted_edges_from(weighted_edge_list)
-    simple_graph.remove_edge(1, 2)
-    simple_graph.remove_edge(0, 1)
-    simple_graph.remove_edge(0, 2)
-    simple_graph.remove_edge(0, 3)
-    nx.draw_networkx(simple_graph)
-    plt.show()
-    calculate_hits(simple_graph)
