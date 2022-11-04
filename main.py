@@ -8,7 +8,6 @@ from hits import calculate_hits
 from json import load, dump
 from os import getcwd
 import networkx as nx
-import pygraphviz
 
 from communities import community_analysis
 from hits import calculate_hits
@@ -56,7 +55,7 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
             return create_digraph(fdata)
     return
 def main():
-    g = create_load_structure(False, True, True, True, True)
+    g = create_load_structure(True, False, True, True, True)
     if g is None:
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
