@@ -1,10 +1,6 @@
 from matplotlib import pyplot as plt
 from networkx import planar_layout
 
-from communities import community_analysis
-from preprocessing import read_data_file, create_digraph, dict_append
-from metrics import calculate_metrics
-from hits import calculate_hits
 from json import load, dump
 from os import getcwd
 import networkx as nx
