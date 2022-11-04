@@ -58,9 +58,9 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
 # Thirdly, analyse the created graph on topics: metric, hits, communitities, etc.
 def main():
     # put one of these 3 to True, depending on which part of the data you'd like to analyse.
-    non_rumour_bool = False
+    non_rumour_bool = True
     rumour_bool = False
-    full_bool = True
+    full_bool = False
     # False, True -> load the structures.
     # True, False -> create the structures. This is unnecessary, since preprocessing has been done.
     g = create_load_structure(False, True, non_rumour_bool, rumour_bool, full_bool)
