@@ -3,9 +3,10 @@ import itertools
 import random
 
 import networkx as nx
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from networkx import find_cliques, bridges, planar_layout, kamada_kawai_layout
+from networkx import find_cliques, bridges
 from networkx.algorithms.community import modularity, girvan_newman
 from networkx.algorithms.connectivity import bridge_components
 
@@ -22,6 +23,7 @@ def make_final_plot(graph, communities, text, positioning):
     plt.figure()
     nx.draw_networkx(graph, node_color=color_map, node_size=10, with_labels=False, width=0.5, pos=positioning)
     plt.title(text)
+    plt.savefig(text + ".png")
     plt.show()
     return
 
@@ -46,6 +48,12 @@ def girvan_newman_all(graph):
 def determine_cliques(graph):
     max_cliques = list(find_cliques(graph))
     print("Maximal cliques: " + str(max_cliques))
+    len_cliques = []
+    for clique in max_cliques:
+        len_cliques.append(len(clique))
+    print("Maximum size of cliques: " + str(max(len_cliques)))
+    print("Minimum size of cliques: " + str(min(len_cliques)))
+    print("Mean size of cliques: " + str(np.mean(len_cliques)))
     nodes = []
     cnt_cliques = []
     for node in graph.nodes():
@@ -64,8 +72,8 @@ def determine_cliques(graph):
     plt.xlabel("Node")
     plt.ylabel("Number of cliques")
     ax = plt.gca()
-    # ax.tick_params(axis='x', labelrotation=60)
     plt.setp(ax.xaxis.get_majorticklabels(), rotation=80)
+    plt.savefig(r'cliques.png')
     plt.tight_layout()
     plt.show()
     return
@@ -74,6 +82,7 @@ def determine_cliques(graph):
 def determine_bridges(graph, positioning):
     bridges_list = list(bridges(graph))
     print("Bridges:" + str(bridges_list))
+    print("Length of bridges" + str(len(bridges_list)))
     if len(bridges_list) > 0:
         communities = sorted(map(sorted, bridge_components(graph)))
         print("Bridge components")
@@ -87,7 +96,6 @@ def community_analysis(graph, positioning):
     # reciprocal: bool (optional) (if True only keep edges that appear in both directions).
     undirected_graph = graph.to_undirected()
     print("Undirected graph:")
-    # TODO does not seem to draw all edges?
     plt.figure()
     nx.draw_networkx(undirected_graph, node_size=10, with_labels=False, width=0.5, pos=positioning)
     plt.title("Undirected version of the network")
