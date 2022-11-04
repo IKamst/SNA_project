@@ -10,17 +10,21 @@ import statistics
 # connected components and, size of the connected
 # components.
 
+def print_min_max_mean_median(metrics, label):
+    mean_metrics = statistics.mean(metrics)
+    print("Mean " + label + ": " + str(mean_metrics))
+    median_metrics = statistics.median(metrics)
+    print("Median " + label + ": " + str(median_metrics))
+    min_metrics = min(metrics)
+    print("Min " + label + ": " + str(min_metrics))
+    max_metrics = max(metrics)
+    print("Max " + label + ": " + str(max_metrics))
+
 # Print information on degree centrality and plot the degree probabilities.
 def print_plot_degree_distributions(ax, degrees, graph, label):
     degree_values = [degrees.get(vertex, 0) for vertex in graph.nodes()]
-    mean_degree = statistics.mean(degree_values)
-    print("Mean degree " + label + ": " + str(mean_degree))
-    median_degree = statistics.median(degree_values)
-    print("Median degree " + label + ": " + str(median_degree))
-    min_degree = min(degree_values)
-    print("Min degree " + label + ": " + str(min_degree))
+    print_min_max_mean_median(degree_values, "degree " + label)
     max_degree = max(degree_values)
-    print("Max degree " + label + ": " + str(max_degree))
     max_degree_node = {key for key, value in degrees.items() if value == max_degree}
     print("Max degree vertex " + label + ": " + str(max_degree_node))
     degree_prob= [ 0 for degree in range(max_degree + 1)]
@@ -40,19 +44,23 @@ def calculate_degree_distribution(graph):
 
     # In-degree
     in_degrees = dict(graph.in_degree())
-    print_plot_degree_distributions(ax, in_degrees, graph, "in-degree")
+    print_plot_degree_distributions(ax, in_degrees, graph, "In-degree")
     # Out-degree
     out_degrees = dict(graph.out_degree())
-    print_plot_degree_distributions(ax, out_degrees, graph, "out-degree")
+    print_plot_degree_distributions(ax, out_degrees, graph, "Out-degree")
     # All degrees
     total_degrees = dict(graph.degree())
-    print_plot_degree_distributions(ax, total_degrees, graph, "total degree")
+    print_plot_degree_distributions(ax, total_degrees, graph, "Total degree")
 
     # Make the degree distribution plot
-    plt.legend(loc="upper left")
-    plt.xlabel("Degree")
-    plt.ylabel("Frequency")
-    plt.title("Degree distribution")
+    plt.xlim([0, 20])
+    plt.legend(loc="upper right", fontsize = 15)
+    plt.xlabel("Degree", fontsize = 18)
+    plt.ylabel("Probability", fontsize = 18)
+    plt.title("Degree distribution rumours", fontsize = 18)
+    plt.yticks(fontsize = 15)
+    plt.xticks(fontsize = 15)
+    plt.savefig("degree_distribution", bbox_inches = "tight")
     plt.show()
 
 # Calculate the network diameter: the longest shortest path in the network
@@ -83,6 +91,8 @@ def calculate_connected_components(graph):
     n_strongly_connected = nx.number_strongly_connected_components(graph)
     print("Number of strongly connected components: " + str(n_strongly_connected))
     strongly_connected = [(component, len(component)) for component in sorted(nx.strongly_connected_components(graph), key = len, reverse = True)]
+    print(nx.strongly_connected_components)
+    print(max(nx.strongly_connected_components(graph), key=len))
     print("20 largest strongly connected components (with length): "+ str(strongly_connected[:20]))
     mean_strongly_connected = sum(length for _, length in strongly_connected) / n_strongly_connected
     print("Mean length strongly connected components: "+ str(mean_strongly_connected))
@@ -101,17 +111,18 @@ def calculate_connected_components(graph):
 # Calculate centralities other than the degree centrality
 def calculate_centralities(graph):
     # Calculate the eigenvector centrality
-    eigenvector_centrality = statistics.mean(list(nx.eigenvector_centrality(graph, max_iter=600).values()))
-    print("Mean eigenvector centrality: " + str(eigenvector_centrality))
+    eigenvector_centrality = list(nx.eigenvector_centrality(graph, max_iter=600).values())
+    print(eigenvector_centrality)
+    print_min_max_mean_median(eigenvector_centrality, "eigenvector centrality")
     # Calculate the closeness centrality
     # TODO find out what kind of definition of closeness centrality is used (for report)
-    closeness_centrality = statistics.mean(list(nx.closeness_centrality(graph).values()))
-    print("Mean closeness centrality: " + str(closeness_centrality))
+    closeness_centrality = list(nx.closeness_centrality(graph, wf_improved=False).values())
+    print_min_max_mean_median(closeness_centrality, "closeness centrality")
     # Calculate the betweenness centrality
     # TODO find out what sample of nodes to use (if you do not include k it takes a realllly long time)
     n_nodes = graph.number_of_nodes()
-    betweenness_centrality = statistics.mean(list(nx.betweenness_centrality(graph).values()))
-    print("Mean betweenness centrality: " + str(betweenness_centrality))
+    betweenness_centrality = list(nx.betweenness_centrality(graph).values())
+    print_min_max_mean_median(betweenness_centrality, "betweenness centrality")
 
 # Calculate metrics and measures.
 def calculate_metrics(graph):
@@ -126,8 +137,8 @@ def calculate_metrics(graph):
     # Calculate other centralities
     calculate_centralities(graph)
     # Calculate the clustering coefficient
-    average_clustering = nx.average_clustering(graph)
-    print("Average clustering coefficient: " + str(average_clustering))
+    clustering = nx.clustering(graph)
+    print_min_max_mean_median((clustering.values()), "clustering coefficient")
     # Calculate the network diameter
     calculate_network_diameter(graph)
     # Calculate the density

@@ -22,7 +22,7 @@ def make_final_plot(graph, communities, text, positioning):
                 color_map.append(colours[i])
     plt.figure()
     nx.draw_networkx(graph, node_color=color_map, node_size=10, with_labels=False, width=0.5, pos=positioning)
-    plt.title(text)
+    plt.title(text, fontsize=15)
     plt.savefig(text + ".png")
     plt.show()
     return
@@ -68,26 +68,27 @@ def determine_cliques(graph):
     df.sort_values(by=["Number of cliques"], inplace=True, ascending=False)
     plt.figure()
     plt.bar(df["Node"][0:20], df["Number of cliques"][0:20])
-    plt.title("Top 20 nodes with most cliques")
-    plt.xlabel("Node")
-    plt.ylabel("Number of cliques")
+    plt.title("Top 20 vertices with most cliques for non-rumour graph", fontsize=15)
+    plt.xlabel("Vertex", fontsize=14)
+    plt.ylabel("Number of cliques", fontsize=14)
     ax = plt.gca()
     plt.setp(ax.xaxis.get_majorticklabels(), rotation=80)
-    plt.savefig(r'cliques.png')
     plt.tight_layout()
+    plt.savefig(r'cliques_nonrumour.png')
     plt.show()
     return
 
 
 def determine_bridges(graph, positioning):
     bridges_list = list(bridges(graph))
-    print("Bridges:" + str(bridges_list))
-    print("Length of bridges" + str(len(bridges_list)))
+    print("Bridges: " + str(bridges_list))
+    print("Length of bridges: " + str(len(bridges_list)))
+    print("Connected components: " + str(nx.number_connected_components(graph)))
     if len(bridges_list) > 0:
         communities = sorted(map(sorted, bridge_components(graph)))
-        print("Bridge components")
+        print("Number of bridge components: " + str(len(communities)))
         print(communities)
-        make_final_plot(graph, communities, "Network coloured by bridge components", positioning)
+        make_final_plot(graph, communities, "Rumour graph coloured by bridge components", positioning)
     return bridges_list
 
 
@@ -106,14 +107,14 @@ def community_analysis(graph, positioning):
     best, max_mod = girvan_newman_all(undirected_graph)
     print("Maximum modularity: " + str(max_mod))
     print("For best communities partitioning: " + str(best))
-    make_final_plot(undirected_graph, best, "Network coloured by Girvan Newman communities", positioning)
+    print("Number components:", str(len(best)))
+    make_final_plot(undirected_graph, best, "Rumour graph coloured by Girvan Newman communities", positioning)
     bridges_list = determine_bridges(undirected_graph, positioning)
     # TODO homophily analysis. Need to think of which factors to consider
     # Homophily is the principle that we tend to be similar to our
     # friends. -> Intrinsic and contextual
 
 
-# TODO send actual graph to community_analysis()
 if __name__ == "__main__":
     directed_graph = nx.random_k_out_graph(20, 3, 0.5)
     positioning = nx.spring_layout(directed_graph)

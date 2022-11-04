@@ -70,8 +70,7 @@ def main():
         calculate_metrics(g)
         calculate_hits(g)
         community_analysis(g, positioning)
-        if FULL:
-            longitudinal_analysis()
+        longitudinal_analysis()
 
 
 if __name__ == "__main__":
