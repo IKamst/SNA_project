@@ -56,11 +56,12 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
 
 
 def main():
-    g = create_load_structure(False, True, False, False, True)
+    g = create_load_structure(False, True, True, False, False)
     if g is None:
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
         print(g)
+        g = g.reverse()
         undirected_graph = g.to_undirected()
         positioning = nx.spring_layout(undirected_graph)
         nx.draw_networkx(g, node_size=10, with_labels=False, width=0.5, pos=positioning)
