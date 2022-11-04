@@ -19,16 +19,22 @@ def read_data_file(rumourboolpath):
                     f = open(file_path)
                     # Load the data as a dictionary.
                     data = json.load(f)
+                    # unfold the dictionary so it can be converted to a graph
                     newdata = dictionary_unfold(data, {})
+                    # replace the tweet-ID's with account-ID's
                     newdata = replace_dictionary_values(newdata, direc_path, directory_name)
                     bigdictionary = dict_append(bigdictionary, newdata)
+    #save the big structure files.
     out_file = open(wd + "/accounts/structure-" + rumourboolpath + ".json", "w")
     json.dump(bigdictionary, out_file, indent="")
     return bigdictionary
 
-
-#name = directoary_name, dict = newdata, path = direc_path
+"""
+replace the tweet-ID's with the account-ID's of the person that posted them.
+takes as input a dictionary of lists.
+"""
 def replace_dictionary_values(dict, path, name):
+    #change the ID's inside the lists (the values of the dict)
     for file in os.listdir(path + '/source-tweets'): #all files in the source_tweets folder
         if file == (name + '.json'):  # take only the source tweet file
             reactpath = path + '/reactions'
@@ -42,9 +48,9 @@ def replace_dictionary_values(dict, path, name):
                             if len(dict[k]) != 0:
                                 dict[k] = list(map(lambda x: x.replace(data["id_str"], str(data["user"]["id"])), dict[k]))
 
+    # change the keys to the account-ID's
     newdict = {}
     for k, v in dict.items():
-        #replace k
         # if k is the sourcetweet
         if k == name:
             f = open(path + '/source-tweets/' + name + ".json")
@@ -66,7 +72,10 @@ def create_digraph(dict):
     G = nx.DiGraph(dict)
     return G
 
-# given a recursive dictionary of dictionaries,
+""""
+a recursive method.
+it unfolds a dictionary of dictionary of .... into a dictionary of lists.
+"""""
 def dictionary_unfold(data, big_dictionary):
     #base case
     if isinstance(data, list):
@@ -89,9 +98,11 @@ def dictionary_unfold(data, big_dictionary):
             big_dictionary = dictionary_unfold(data[key], big_dictionary)
         return big_dictionary
 
-
-# appends two dictionaries of lists
-# for both dict1 and dict2 of type with lists as value
+""""
+appends two dictionaries of lists
+for both dict1 and dict2 of type with lists as value
+returns one compiled dictionary
+"""""
 def dict_append(dict1, dict2):
     for key in dict2:
         if dict1.get(key) is None:
@@ -99,7 +110,7 @@ def dict_append(dict1, dict2):
         else:
             if isinstance(dict2[key], list):
                 dict1[key] = dict1[key] + dict2[key]
-                dict1[key] = [*set(dict1[key])]
+                dict1[key] = [*set(dict1[key])] #remove doubles
             else:
                 print('ERROR not a list')
                 return None

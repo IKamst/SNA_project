@@ -48,16 +48,10 @@ def pick_source_folder():
                     times.append(scrap_time_from_file(file_path))
     #sort the times
     times.sort()
-    print(times[0]) #first tweet (EGO)
-    print(times[-1]) #last tweet
-    print(len(times))
-    i=0
-    while i < len(times):
-        times[i].replace(tzinfo=None)
-        i=i+1
-    print(datetime.datetime(2015, 3, 26, 0, 0, 0))
-    boundary = bisect.bisect_left(times, datetime.datetime(2015, 3, 26, 0, 0, 0).replace(tzinfo=datetime.timezone.utc))
-    print(boundary)
+    # uncomment this to see the times of the first and last tweet
+    # print(times[0]) #first tweet (EGO)
+    # print(times[-1]) #last tweet
+
 
     # make dict per interval
     interval_dict = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}}
@@ -69,6 +63,7 @@ def pick_source_folder():
                 datetime.time(hour=23, minute=59, second=59)
                 ]
 
+    #make a dictionary per time-interval, these are nested
     G_nodes = []
     for i in range(5):
         for r in os.listdir(EGOpath + '/reactions'):
@@ -85,6 +80,7 @@ def pick_source_folder():
                         interval_dict[i][str(rdict["in_reply_to_status_id"])].append(os.path.splitext(r)[0])
                     else:
                         interval_dict[i][str(rdict["in_reply_to_status_id"])] = [os.path.splitext(r)[0]]
+        # nest the time-interval dictionaries
         if i > 0:
             interval_dict[i] = dict_append(interval_dict[i], interval_dict[i-1])
         G = nx.DiGraph(interval_dict[i])
@@ -101,19 +97,22 @@ def pick_source_folder():
                     colormap.append('#1f78b4')
         if i == 0:
             colormap = '#1f78b4'
+        #show a new graph per time-interval
         G = G.reverse()
         pos = nx.kamada_kawai_layout(G)
         nx.draw_networkx(G, pos=pos, with_labels=False, node_size=150, node_color=colormap)
         plt.title('Graph at timestamp ' + str(i), fontsize = 18)
         plt.savefig("longitudinal_" + str(i) + ".png", bbox_inches="tight")
         plt.show()
-                    # if within the interval, let it stay in the structure
-                # use "in_reply_to_status_id"
-    print(interval_dict)
+
+    #return the full dictionary of all 5 time intervals
     return interval_dict
 
-
+#takes as input a dictionary of dictionaries,
+# specificially made for interval_dict with EGO="580323498905702400"
 def graph_from_interval_dict(id):
+
+    #initialising the nodes per dictionary
     colormap = []
     graph0 = nx.DiGraph(id[0])
     graph0 = graph0.nodes
@@ -125,6 +124,8 @@ def graph_from_interval_dict(id):
     graph3 = graph3.nodes
     G = nx.DiGraph(id[4])
     graph4 = G.nodes
+
+    #find in which time-interval a node belongs, assign a color.
     for n in G.nodes:
         if n in graph0:
             colormap.append('#dce4a8')
@@ -136,13 +137,13 @@ def graph_from_interval_dict(id):
             colormap.append('#3a7077')
         if n in graph4 and n not in graph3:
             colormap.append('#2a4858')
+
+    #show the full multi-color graph
     G = G.reverse()
     pos = nx.kamada_kawai_layout(G)
     plt.figure()
     nx.draw_networkx(G, pos=pos, with_labels=False, node_size=150, node_color=colormap)
     plt.title('Longitudinal Graph', fontsize = 18)
-    # ax = plt.subplot()
-    # im = ax.imshow(np.arange(100).reshape((10, 10)))
     cm = LinearSegmentedColormap.from_list('defcol', ['#dce4a8', '#2a4858'])
     cb = plt.colorbar(ScalarMappable(cmap=cm, norm=plt.Normalize(0, 5 - 1)), ticks=range(5))
     cb.set_label(label='Timestamp', fontsize = 15)
@@ -151,7 +152,8 @@ def graph_from_interval_dict(id):
     return
 
 
+
 def longitudinal_analysis():
-    id = pick_source_folder()
-    #graph_from_interval_dict(id)
+    id = pick_source_folder() #make the 5 graphs per timestep
+    graph_from_interval_dict(id) #make the final summarising graph
     return
