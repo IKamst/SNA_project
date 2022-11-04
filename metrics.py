@@ -91,6 +91,7 @@ def calculate_connected_components(graph):
     n_weakly_connected = nx.number_weakly_connected_components(graph)
     print("Number of weakly connected components: " + str(n_weakly_connected))
     weakly_connected = [(component, len(component)) for component in sorted(nx.weakly_connected_components(graph))]
+    # TODO fix this: doesn't seem sorted (or top 20)?
     print("20 largest weakly connected components (with length): " + str(weakly_connected[:20]))
     mean_weakly_connected = sum(length for _, length in weakly_connected) / n_weakly_connected
     print("Mean length weakly connected components: "+ str(mean_weakly_connected))
