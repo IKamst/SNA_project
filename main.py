@@ -57,8 +57,8 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
 
 
 def main():
-    non_rumour_bool = True
-    rumour_bool = False
+    non_rumour_bool = False
+    rumour_bool = True
     full_bool = False
     g = create_load_structure(False, True, non_rumour_bool, rumour_bool, full_bool)
     if g is None:
