@@ -136,6 +136,7 @@ def calculate_metrics(graph):
     # Determine the connected components and their size
     calculate_connected_components(graph)
 
+
 # Temporary. Using a simple graph right now.
 # TODO: use actual graph
 if __name__ == "__main__":
