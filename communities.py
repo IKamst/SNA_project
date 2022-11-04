@@ -3,6 +3,7 @@ import itertools
 import random
 
 import networkx as nx
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from networkx import find_cliques, bridges, planar_layout, kamada_kawai_layout
@@ -46,6 +47,12 @@ def girvan_newman_all(graph):
 def determine_cliques(graph):
     max_cliques = list(find_cliques(graph))
     print("Maximal cliques: " + str(max_cliques))
+    len_cliques = []
+    for clique in max_cliques:
+        len_cliques.append(len(clique))
+    print("Maximum size of cliques: " + str(max(len_cliques)))
+    print("Minimum size of cliques: " + str(min(len_cliques)))
+    print("Mean size of cliques: " + str(np.mean(len_cliques)))
     nodes = []
     cnt_cliques = []
     for node in graph.nodes():
