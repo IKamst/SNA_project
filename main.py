@@ -62,7 +62,7 @@ def main():
         # nx.draw_networkx(g, node_size=20, with_labels=False)
         # plt.title("Directed version of the network")
         # plt.show()
-        calculate_metrics(g)
+        #calculate_metrics(g)
         # calculate_hits(g)
         # community_analysis(g)
         longitudinal_analysis()
