@@ -63,13 +63,13 @@ def main():
         g = g.reverse()
         undirected_graph = g.to_undirected()
         positioning = nx.spring_layout(undirected_graph)
-        nx.draw_networkx(g, node_size=10, with_labels=False, width=0.5, pos=positioning)
-        plt.title("Directed version of the network")
-        plt.show()
-        calculate_metrics(g)
+        # nx.draw_networkx(g, node_size=10, with_labels=False, width=0.5, pos=positioning)
+        # plt.title("Directed version of the network")
+        # plt.show()
+        # calculate_metrics(g)
         calculate_hits(g)
-        community_analysis(g, positioning)
-        longitudinal_analysis()
+        # community_analysis(g, positioning)
+        # longitudinal_analysis()
 
 
 if __name__ == "__main__":
