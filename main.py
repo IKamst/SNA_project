@@ -54,6 +54,8 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
             fdata = load(f)
             return create_digraph(fdata)
     return
+
+
 def main():
     g = create_load_structure(False, True, True, False, False)
     if g is None:
