@@ -63,6 +63,10 @@ def determine_cliques(graph):
     plt.title("Top 20 nodes with most cliques")
     plt.xlabel("Node")
     plt.ylabel("Number of cliques")
+    ax = plt.gca()
+    # ax.tick_params(axis='x', labelrotation=60)
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=80)
+    plt.tight_layout()
     plt.show()
     return
 
