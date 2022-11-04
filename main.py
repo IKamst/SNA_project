@@ -39,23 +39,23 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
 
     if OPEN_STRUCTURE_FILES:
         if NON_RUMOUR:
-            nrf = open(wd + '\structures\structure-non-rumours.json')
+            nrf = open(wd + '\\accounts\structure-non-rumours.json')
             nrdata = load(nrf)
             return create_digraph(nrdata)
 
 
         if RUMOUR:
-            rf = open(wd + '\structures\structure-rumours.json')
+            rf = open(wd + '\\accounts\structure-rumours.json')
             rdata = load(rf)
             return create_digraph(rdata)
 
         if FULL:
-            f = open(wd + '\structures\structure-full-dictionary.json')
+            f = open(wd + '\\accounts\structure-full-dictionary.json')
             fdata = load(f)
             return create_digraph(fdata)
     return
 def main():
-    g = create_load_structure(True, False, False, False, True)
+    g = create_load_structure(False, True, False, False, True)
     if g is None:
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
