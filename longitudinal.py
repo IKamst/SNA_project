@@ -7,11 +7,14 @@ from matplotlib.cm import ScalarMappable
 
 from preprocessing import dict_append
 from matplotlib import pyplot as plt
+import bisect
 
+#the ID of the chosen source tweet
 EGO = "580323498905702400"
 
 # input: fp = filepath of the .json file
 # output: <class 'datetime.datetime'>
+#takes a filepath of a tweet and returns a datetime object when it was tweeted.
 def scrap_time_from_file(fp):
     f = open(fp)
     data = load(f)
@@ -21,7 +24,7 @@ def scrap_time_from_file(fp):
 
 
 # just look at one source tweet
-# pick some time intervals, lets say 1 hour and take 6 hours
+# pick some time intervals
 # for every interval, plot how the graph looks at that second
 # in the end, make 1 plot of x = time, y = total amount of reactions
 def pick_source_folder():
@@ -32,11 +35,11 @@ def pick_source_folder():
 
     # make a list of all the times at which a reaction to the EGO was posted
     times = []
-    if os.path.isdir(EGOpath):
+    if os.path.isdir(EGOpath): #loop over all tweets in the
         # Loop over the files in that directory.
         for file in os.listdir(EGOpath + '/source-tweets'):
             file_path = os.path.join(EGOpath + '/source-tweets', file)
-            if file == (EGO + '.json'):  # take only the source tweet file
+            if file == (EGO + '.json'):  # take only the source tweet file and put the time inside.
                 times.append(scrap_time_from_file(file_path))
         if os.path.exists(EGOpath + '/reactions'):
             for file in os.listdir(EGOpath + '/reactions'):
@@ -45,8 +48,16 @@ def pick_source_folder():
                     times.append(scrap_time_from_file(file_path))
     #sort the times
     times.sort()
-    # print(times[0]) #first tweet (EGO)
-    # print(times[-1]) #last tweet
+    print(times[0]) #first tweet (EGO)
+    print(times[-1]) #last tweet
+    print(len(times))
+    i=0
+    while i < len(times):
+        times[i].replace(tzinfo=None)
+        i=i+1
+    print(datetime.datetime(2015, 3, 26, 0, 0, 0))
+    boundary = bisect.bisect_left(times, datetime.datetime(2015, 3, 26, 0, 0, 0).replace(tzinfo=datetime.timezone.utc))
+    print(boundary)
 
     # make dict per interval
     interval_dict = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}}
@@ -57,7 +68,6 @@ def pick_source_folder():
                 datetime.time(hour=12, minute=1, second=18),
                 datetime.time(hour=23, minute=59, second=59)
                 ]
-    print(interval)
 
     G_nodes = []
     for i in range(5):
@@ -69,8 +79,6 @@ def pick_source_folder():
                 rdict = load(rf)
                 t = scrap_time_from_file(r_path).time()
                 if t > interval[i] and t < interval[i + 1]:
-                    if i == 4:
-                        print("r: ", r, "time: ", t)
                     i_dict = interval_dict[i]
                     # check if this key already exists in i_dict
                     if str(rdict["in_reply_to_status_id"]) in i_dict.keys():
@@ -86,7 +94,6 @@ def pick_source_folder():
         G_nodes.append(G.nodes)
         if i > 0:
             diff = set(G_nodes[i]) - set(G_nodes[i-1])
-            print("diff:", diff)
             for node in G:
                 if node in diff:
                     colormap.append('red')
@@ -146,5 +153,5 @@ def graph_from_interval_dict(id):
 
 def longitudinal_analysis():
     id = pick_source_folder()
-    graph_from_interval_dict(id)
+    #graph_from_interval_dict(id)
     return
