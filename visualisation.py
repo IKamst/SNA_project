@@ -1,3 +1,5 @@
+import networkx as nx
+
 from communities import make_final_plot
 from main import create_load_structure
 
@@ -17,7 +19,8 @@ def create_community_structure(non_rumour_graph, rumour_graph, full_graph):
     print("Rumour nodes: " + str(len(r_nodes)))
     print("Both nodes: " + str(len(nr_r_nodes)))
     communities = [nr_nodes, r_nodes, nr_r_nodes]
-    make_final_plot(full_graph, communities, "Full network, coloured by rumour and non-rumour")
+    positioning = nx.spring_layout(full_graph.to_undirected())
+    make_final_plot(full_graph, communities, "Full network, coloured by rumour and non-rumour", positioning)
     return
 
 

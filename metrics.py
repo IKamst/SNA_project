@@ -82,7 +82,7 @@ def calculate_network_diameter(graph):
 def calculate_connected_components(graph):
     n_strongly_connected = nx.number_strongly_connected_components(graph)
     print("Number of strongly connected components: " + str(n_strongly_connected))
-    strongly_connected = [(component, len(component)) for component in sorted(nx.strongly_connected_components(graph))]
+    strongly_connected = [(component, len(component)) for component in sorted(nx.strongly_connected_components(graph), key = len, reverse = True)]
     print("20 largest strongly connected components (with length): "+ str(strongly_connected[:20]))
     mean_strongly_connected = sum(length for _, length in strongly_connected) / n_strongly_connected
     print("Mean length strongly connected components: "+ str(mean_strongly_connected))
@@ -90,7 +90,8 @@ def calculate_connected_components(graph):
     print("Max length strongly connected components: " + str(max_strongly_connected))
     n_weakly_connected = nx.number_weakly_connected_components(graph)
     print("Number of weakly connected components: " + str(n_weakly_connected))
-    weakly_connected = [(component, len(component)) for component in sorted(nx.weakly_connected_components(graph))]
+    weakly_connected = [(component, len(component)) for component in sorted(nx.weakly_connected_components(graph), key = len, reverse = True)]
+    # TODO fix this: doesn't seem sorted (or top 20)?
     print("20 largest weakly connected components (with length): " + str(weakly_connected[:20]))
     mean_weakly_connected = sum(length for _, length in weakly_connected) / n_weakly_connected
     print("Mean length weakly connected components: "+ str(mean_weakly_connected))
@@ -109,7 +110,7 @@ def calculate_centralities(graph):
     # Calculate the betweenness centrality
     # TODO find out what sample of nodes to use (if you do not include k it takes a realllly long time)
     n_nodes = graph.number_of_nodes()
-    betweenness_centrality = statistics.mean(list(nx.betweenness_centrality(graph, k = int(n_nodes/10)).values()))
+    betweenness_centrality = statistics.mean(list(nx.betweenness_centrality(graph).values()))
     print("Mean betweenness centrality: " + str(betweenness_centrality))
 
 # Calculate metrics and measures.

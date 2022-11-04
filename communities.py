@@ -5,13 +5,13 @@ import random
 import networkx as nx
 import pandas as pd
 from matplotlib import pyplot as plt
-from networkx import find_cliques, bridges
+from networkx import find_cliques, bridges, planar_layout, kamada_kawai_layout
 from networkx.algorithms.community import modularity, girvan_newman
 from networkx.algorithms.connectivity import bridge_components
 
 
 # Make a plot of the graph. Giving each community different colour in nodes.
-def make_final_plot(graph, communities, text):
+def make_final_plot(graph, communities, text, positioning):
     color_map = []
     get_colours = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
     colours = get_colours(len(communities))
@@ -20,7 +20,7 @@ def make_final_plot(graph, communities, text):
             if node in communities[i]:
                 color_map.append(colours[i])
     plt.figure()
-    nx.draw_networkx(graph, node_color=color_map, node_size=20, with_labels=False)
+    nx.draw_networkx(graph, node_color=color_map, node_size=10, with_labels=False, width=0.5, pos=positioning)
     plt.title(text)
     plt.show()
     return
@@ -31,10 +31,10 @@ def girvan_newman_all(graph):
     best = []
     max_mod = 0
     gn_model = girvan_newman(temp_graph)
-    # TODO determine how many communities
     k = 50
     for communities in itertools.islice(gn_model, k):
-        print(tuple(sorted(c) for c in communities))
+        # print(tuple(sorted(c) for c in communities))
+        # print(len(communities))
         mod = modularity(graph, communities)
         print("Modularity:" + str(mod))
         if mod > max_mod:
@@ -58,8 +58,6 @@ def determine_cliques(graph):
     df = pd.DataFrame({"Node": nodes,
                        "Number of cliques": cnt_cliques})
     df.sort_values(by=["Number of cliques"], inplace=True, ascending=False)
-    print(df)
-    print("here")
     plt.figure()
     plt.bar(df["Node"][0:20], df["Number of cliques"][0:20])
     plt.title("Top 20 nodes with most cliques")
@@ -69,25 +67,25 @@ def determine_cliques(graph):
     return
 
 
-def determine_bridges(graph):
+def determine_bridges(graph, positioning):
     bridges_list = list(bridges(graph))
-    print(bridges_list)
+    print("Bridges:" + str(bridges_list))
     if len(bridges_list) > 0:
         communities = sorted(map(sorted, bridge_components(graph)))
         print("Bridge components")
         print(communities)
-        make_final_plot(graph, communities, "Network coloured by bridge components")
+        make_final_plot(graph, communities, "Network coloured by bridge components", positioning)
     return bridges_list
 
 
-def community_analysis(graph, ):
+def community_analysis(graph, positioning):
     # Create an undirected version of this graph.
     # reciprocal: bool (optional) (if True only keep edges that appear in both directions).
     undirected_graph = graph.to_undirected()
     print("Undirected graph:")
     # TODO does not seem to draw all edges?
     plt.figure()
-    nx.draw_networkx(undirected_graph, with_labels=False, node_size=30, edgelist=list(undirected_graph.edges()))
+    nx.draw_networkx(undirected_graph, node_size=10, with_labels=False, width=0.5, pos=positioning)
     plt.title("Undirected version of the network")
     plt.show()
     # Find the maximal cliques
@@ -96,8 +94,8 @@ def community_analysis(graph, ):
     best, max_mod = girvan_newman_all(undirected_graph)
     print("Maximum modularity: " + str(max_mod))
     print("For best communities partitioning: " + str(best))
-    make_final_plot(undirected_graph, best, "Network coloured by Girvan Newman communities")
-    bridges_list = determine_bridges(undirected_graph)
+    make_final_plot(undirected_graph, best, "Network coloured by Girvan Newman communities", positioning)
+    bridges_list = determine_bridges(undirected_graph, positioning)
     # TODO homophily analysis. Need to think of which factors to consider
     # Homophily is the principle that we tend to be similar to our
     # friends. -> Intrinsic and contextual
@@ -106,6 +104,7 @@ def community_analysis(graph, ):
 # TODO send actual graph to community_analysis()
 if __name__ == "__main__":
     directed_graph = nx.random_k_out_graph(20, 3, 0.5)
+    positioning = nx.spring_layout(directed_graph)
     nx.draw(directed_graph)
     plt.show()
-    community_analysis(directed_graph)
+    community_analysis(directed_graph, positioning)
