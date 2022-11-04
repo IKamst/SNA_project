@@ -2,6 +2,7 @@ from json import load, dump
 import os
 import datetime
 import networkx as nx
+from preprocessing import dict_append
 from matplotlib import pyplot as plt
 
 EGO = "580323498905702400"
@@ -57,9 +58,8 @@ def pick_source_folder():
     #     i=i+1
 
     # make dict per interval
-    interval_dict = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}}
-    interval = [datetime.time(hour=10, minute=0, second=0),
-                datetime.time(hour=11, minute=1, second=18),
+    interval_dict = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}}
+    interval = [datetime.time(hour=11, minute=1, second=17),
                 datetime.time(hour=11, minute=6, second=18),
                 datetime.time(hour=11, minute=16, second=18),
                 datetime.time(hour=11, minute=31, second=18),
@@ -68,6 +68,7 @@ def pick_source_folder():
                 ]
     print(interval)
 
+    G_nodes = []
     for i in range(5):
         for r in os.listdir(EGOpath + '/reactions'):
             r_path = os.path.join(EGOpath + '/reactions', r)
@@ -77,12 +78,31 @@ def pick_source_folder():
                 rdict = load(rf)
                 t = scrap_time_from_file(r_path).time()
                 if t > interval[i] and t < interval[i + 1]:
+                    if i == 4:
+                        print("r: ", r, "time: ", t)
                     i_dict = interval_dict[i]
                     # check if this key already exists in i_dict
                     if str(rdict["in_reply_to_status_id"]) in i_dict.keys():
-                        i_dict[str(rdict["in_reply_to_status_id"])].append(os.path.splitext(r)[0])
+                        interval_dict[i][str(rdict["in_reply_to_status_id"])].append(os.path.splitext(r)[0])
                     else:
-                        i_dict[str(rdict["in_reply_to_status_id"])] = [os.path.splitext(r)[0]]
+                        interval_dict[i][str(rdict["in_reply_to_status_id"])] = [os.path.splitext(r)[0]]
+        if i > 0:
+            interval_dict[i] = dict_append(interval_dict[i], interval_dict[i-1])
+        G = nx.DiGraph(interval_dict[i])
+        colormap = []
+        G_nodes.append(G.nodes)
+        if i > 0:
+            diff = set(G_nodes[i]) - set(G_nodes[i-1])
+            print("diff:", diff)
+            for node in G:
+                if node in diff:
+                    colormap.append('red')
+                else:
+                    colormap.append('blue')
+        G = G.reverse()
+        pos = nx.random_layout(G)  # TODO iris: make this layout better
+        nx.draw_networkx(G, pos=pos, with_labels=False, node_size=150, node_color=colormap)
+        plt.show()
                     # if within the interval, let it stay in the structure
                 # use "in_reply_to_status_id"
     print(interval_dict)
@@ -90,12 +110,12 @@ def pick_source_folder():
 
 #id is dict with graph-dictionary per interval
 def graph_from_interval_dict(id):
-    for v in id.values():
-        print(v)
-        G = nx.DiGraph(v)
-        G = G.reverse()
-        nx.draw_networkx(G, pos=nx.random_layout(G), with_labels=False, node_size=100)
-        #plt.show()
+    for k,v in id.values():
+        G[k] = nx.DiGraph(v)
+        G[k] = G[k].reverse()
+        pos = nx.random_layout(G[k]) #TODO iris: make this layout better
+        nx.draw_networkx(G[k], pos=pos, with_labels=False, node_size=150)
+        plt.show()
 
 
 def create_timeline():
@@ -130,5 +150,5 @@ def longitudinal_analysis():
     # timeline = create_timeline()
     # print(len(timeline))
     id = pick_source_folder()
-    graph_from_interval_dict(id)
+    #graph_from_interval_dict(id)
     return
