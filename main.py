@@ -29,7 +29,7 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
             nrdata = read_data_file('non-rumours')
             if rdata is not None and nrdata is not None:
                 full_dict = dict_append(nrdata, rdata)
-                out_file = open(wd + "/accounts/structure-full-dictionary" + ".json", "w")
+                out_file = open(wd + "\accounts\structure-full-dictionary" + ".json", "w")
                 dump(full_dict, out_file, indent="")
             else:
                 print("An error has occured.")
@@ -39,35 +39,36 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
 
     if OPEN_STRUCTURE_FILES:
         if NON_RUMOUR:
-            nrf = open(wd + '\\accounts\structure-non-rumours.json')
+            nrf = open(wd + '/accounts/structure-non-rumours.json')
             nrdata = load(nrf)
             return create_digraph(nrdata)
 
 
         if RUMOUR:
-            rf = open(wd + '\\accounts\structure-rumours.json')
+            rf = open(wd + '/accounts/structure-rumours.json')
             rdata = load(rf)
             return create_digraph(rdata)
 
         if FULL:
-            f = open(wd + '\\accounts\structure-full-dictionary.json')
+            f = open(wd + '/accounts/structure-full-dictionary.json')
             fdata = load(f)
             return create_digraph(fdata)
     return
 def main():
-    g = create_load_structure(False, True, False, False, True)
+    g = create_load_structure(False, True, True, False, False)
     if g is None:
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
         print(g)
-        # undirected_graph = g.to_undirected()
-        # positioning = nx.spring_layout(undirected_graph)
-        # nx.draw_networkx(g, node_size=10, with_labels=False, width=0.5, pos=positioning)
-        # plt.title("Directed version of the network")
-        # plt.show()
+        g = g.reverse()
+        undirected_graph = g.to_undirected()
+        positioning = nx.spring_layout(undirected_graph)
+        nx.draw_networkx(g, node_size=10, with_labels=False, width=0.5, pos=positioning)
+        plt.title("Directed version of the network")
+        plt.show()
         calculate_metrics(g)
-        # calculate_hits(g)
-        # community_analysis(g, positioning)
+        calculate_hits(g)
+        community_analysis(g, positioning)
         longitudinal_analysis()
 
 
