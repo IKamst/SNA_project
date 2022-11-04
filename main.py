@@ -54,8 +54,13 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
             fdata = load(f)
             return create_digraph(fdata)
     return
+
+
 def main():
-    g = create_load_structure(False, True, False, True, False)
+    non_rumour_bool = True
+    rumour_bool = False
+    full_bool = False
+    g = create_load_structure(False, True, non_rumour_bool, rumour_bool, full_bool)
     if g is None:
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
@@ -68,7 +73,7 @@ def main():
         plt.show()
         calculate_metrics(g)
         calculate_hits(g)
-        community_analysis(g, positioning)
+        community_analysis(g, positioning, non_rumour_bool)
         longitudinal_analysis()
 
 

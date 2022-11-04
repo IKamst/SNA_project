@@ -10,16 +10,20 @@ from networkx import find_cliques, bridges
 from networkx.algorithms.community import modularity, girvan_newman
 from networkx.algorithms.connectivity import bridge_components
 
+from homophily import read_data_homophily
+
 
 # Make a plot of the graph. Giving each community different colour in nodes.
 def make_final_plot(graph, communities, text, positioning):
     color_map = []
     get_colours = lambda n: ["#%06x" % random.randint(0, 0xFFFFFF) for _ in range(n)]
     colours = get_colours(len(communities))
+    print(len(colours))
     for node in graph.nodes():
         for i in range(len(communities)):
             if node in communities[i]:
                 color_map.append(colours[i])
+    print(len(color_map))
     plt.figure()
     nx.draw_networkx(graph, node_color=color_map, node_size=10, with_labels=False, width=0.5, pos=positioning)
     plt.title(text, fontsize=15)
@@ -42,6 +46,9 @@ def girvan_newman_all(graph):
         if mod > max_mod:
             max_mod = mod
             best = copy.deepcopy(communities)
+    print("Maximum modularity: " + str(max_mod))
+    print("For best communities partitioning: " + str(best))
+    print("Number components:", str(len(best)))
     return best, max_mod
 
 
@@ -92,7 +99,42 @@ def determine_bridges(graph, positioning):
     return bridges_list
 
 
-def community_analysis(graph, positioning):
+def homophily(graph, id_verified_dic):
+    verified = []
+    not_verified = []
+    # for key in id_verified_dic:
+    #     if id_verified_dic[key]: # If verified
+    #         verified.append(str(key))
+    #     else:
+    #         not_verified.append(key)
+    for node in graph.nodes():
+        print(node)
+        print(id_verified_dic[str(node)])
+        if id_verified_dic[str(node)]: # If verified
+            verified.append(node)
+        else:
+            not_verified.append(node)
+    communities = (verified, not_verified)
+    print(communities)
+    print("Number of verified users: " + str(len(verified)))
+    print("Number of unverified users: " + str(len(not_verified)))
+    total = len(verified) + len(not_verified)
+    fraction_verified = len(verified)/total
+    fraction_not_verified = len(not_verified)/total
+    predicted_frac_verified_not_verified_edges = 2 * fraction_verified * fraction_not_verified
+    cnt_verified_not_verified_edges = 0
+    for edge in graph.edges():
+        if edge[0] in verified and edge[1] in not_verified:
+            cnt_verified_not_verified_edges = cnt_verified_not_verified_edges + 1
+        if edge[0] in not_verified and edge[1] in verified:
+            cnt_verified_not_verified_edges = cnt_verified_not_verified_edges + 1
+    actual_frac_verified_not_verified_edges = cnt_verified_not_verified_edges / graph.number_of_edges()
+    print("Predicted fraction verified - not verified edges: " + str(predicted_frac_verified_not_verified_edges))
+    print("Actual fraction verified - not verified edges: " + str(actual_frac_verified_not_verified_edges))
+    return communities
+
+
+def community_analysis(graph, positioning, non_rumour_bool):
     # Create an undirected version of this graph.
     # reciprocal: bool (optional) (if True only keep edges that appear in both directions).
     undirected_graph = graph.to_undirected()
@@ -102,17 +144,18 @@ def community_analysis(graph, positioning):
     plt.title("Undirected version of the network")
     plt.show()
     # Find the maximal cliques
-    determine_cliques(undirected_graph)
-    # Find the best partitioning using Girvan Newman with modularity
-    best, max_mod = girvan_newman_all(undirected_graph)
-    print("Maximum modularity: " + str(max_mod))
-    print("For best communities partitioning: " + str(best))
-    print("Number components:", str(len(best)))
-    make_final_plot(undirected_graph, best, "Rumour graph coloured by Girvan Newman communities", positioning)
-    bridges_list = determine_bridges(undirected_graph, positioning)
-    # TODO homophily analysis. Need to think of which factors to consider
-    # Homophily is the principle that we tend to be similar to our
-    # friends. -> Intrinsic and contextual
+    # determine_cliques(undirected_graph)
+    # # Find the best partitioning using Girvan Newman with modularity
+    # best, max_mod = girvan_newman_all(undirected_graph)
+    # bridges_list = determine_bridges(undirected_graph, positioning)
+    # make_final_plot(undirected_graph, best, "Rumour graph coloured by Girvan Newman communities", positioning)
+    id_to_verified_dic = {}
+    if non_rumour_bool:
+        id_to_verified_dic = read_data_homophily('non-rumours', id_to_verified_dic)
+    else:
+        id_to_verified_dic = read_data_homophily('rumours', id_to_verified_dic)
+    communities = homophily(undirected_graph, id_to_verified_dic)
+    make_final_plot(undirected_graph, communities, "Graph coloured based on verified or not", positioning)
 
 
 if __name__ == "__main__":
@@ -120,4 +163,4 @@ if __name__ == "__main__":
     positioning = nx.spring_layout(directed_graph)
     nx.draw(directed_graph)
     plt.show()
-    community_analysis(directed_graph, positioning)
+    community_analysis(directed_graph, positioning, True)
