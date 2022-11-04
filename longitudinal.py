@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 
 EGO = "580323498905702400"
 
-
 # input: fp = filepath of the .json file
 # output: <class 'datetime.datetime'>
 def scrap_time_from_file(fp):
@@ -22,7 +21,6 @@ def scrap_time_from_file(fp):
 # pick some time intervals, lets say 1 hour and take 6 hours
 # for every interval, plot how the graph looks at that second
 # in the end, make 1 plot of x = time, y = total amount of reactions
-#returns a
 def pick_source_folder():
     # find the path of the EGO
     pathfile = os.path.join(os.getcwd(), 'germanwings-crash-all-rnr-threads')
@@ -42,20 +40,10 @@ def pick_source_folder():
                 file_path = os.path.join(EGOpath + '/reactions', file)
                 if '_' not in file:  # only take tweets
                     times.append(scrap_time_from_file(file_path))
-    # sort these times
-    # times.sort(key=lambda tup: tup[0])
+    #sort the times
     times.sort()
     # print(times[0]) #first tweet (EGO)
     # print(times[-1]) #last tweet
-
-    # print only the times (all posted on the same date)
-    # i=0
-    # while i < len(times):
-    #     t = times[i][0].time()
-    #     if t > datetime.time(hour=12, minute=1, second=18):
-    #
-    #         print(t)
-    #     i=i+1
 
     # make dict per interval
     interval_dict = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}}
@@ -89,6 +77,8 @@ def pick_source_folder():
         if i > 0:
             interval_dict[i] = dict_append(interval_dict[i], interval_dict[i-1])
         G = nx.DiGraph(interval_dict[i])
+
+        #assign color red to new nodes
         colormap = []
         G_nodes.append(G.nodes)
         if i > 0:
@@ -98,57 +88,53 @@ def pick_source_folder():
                 if node in diff:
                     colormap.append('red')
                 else:
-                    colormap.append('blue')
+                    colormap.append('#1f78b4')
+        if i == 0:
+            colormap = '#1f78b4'
         G = G.reverse()
         pos = nx.random_layout(G)  # TODO iris: make this layout better
         nx.draw_networkx(G, pos=pos, with_labels=False, node_size=150, node_color=colormap)
+        plt.title('Graph at timestamp ' + str(i))
         plt.show()
                     # if within the interval, let it stay in the structure
                 # use "in_reply_to_status_id"
     print(interval_dict)
     return interval_dict
 
-#id is dict with graph-dictionary per interval
+
 def graph_from_interval_dict(id):
-    for k,v in id.values():
-        G[k] = nx.DiGraph(v)
-        G[k] = G[k].reverse()
-        pos = nx.random_layout(G[k]) #TODO iris: make this layout better
-        nx.draw_networkx(G[k], pos=pos, with_labels=False, node_size=150)
-        plt.show()
-
-
-def create_timeline():
-    wd = os.getcwd()
-    base = wd + '/germanwings-crash-all-rnr-threads'
-    times = []
-    for rumourfolder in os.listdir(base):  # non-rumour and rumour
-        path = base + '/' + rumourfolder
-        if os.path.isdir(path):
-            for directory_name in os.listdir(path):
-                # if directory_name == EGO:# directory_name = 580319983676313601
-                direc_path = path + '/' + directory_name
-                if os.path.isdir(direc_path):
-                    # Loop over the files in that directory.
-                    for file in os.listdir(direc_path + '/source-tweets'):
-                        file_path = os.path.join(direc_path + '/source-tweets', file)
-                        if file == (directory_name + '.json'):  # take only the source tweet file
-                            times.append(scrap_time_from_file(file_path))
-                    if os.path.exists(direc_path + '/reactions'):
-                        for file in os.listdir(direc_path + '/reactions'):
-                            file_path = os.path.join(direc_path + '/reactions', file)
-                            if '_' not in file:  # only take tweets
-                                times.append(scrap_time_from_file(file_path))
-    # sort it by time
-    times.sort(key=lambda tup: tup[0])
-    print(len(times))
-    print(times[0])
-    return times
+    colormap = []
+    graph0 = nx.DiGraph(id[0])
+    graph0 = graph0.nodes
+    graph1 = nx.DiGraph(id[1])
+    graph1 = graph1.nodes
+    graph2 = nx.DiGraph(id[2])
+    graph2 = graph2.nodes
+    graph3 = nx.DiGraph(id[3])
+    graph3 = graph3.nodes
+    G = nx.DiGraph(id[4])
+    graph4 = G.nodes
+    for n in G.nodes:
+        if n in graph0:
+            colormap.append('blue')
+        if n in graph1 and n not in graph0:
+            colormap.append('pink')
+        if n in graph2 and n not in graph1:
+            colormap.append('red')
+        if n in graph3 and n not in graph2:
+            colormap.append('green')
+        if n in graph4 and n not in graph3:
+            colormap.append('yellow')
+    G = G.reverse()
+    pos = nx.random_layout(G)  # TODO iris: make this layout better
+    plt.figure()
+    nx.draw_networkx(G, pos=pos, with_labels=False, node_size=150, node_color=colormap)
+    plt.title('Longitudinal Graph')
+    plt.show()
+    return
 
 
 def longitudinal_analysis():
-    # timeline = create_timeline()
-    # print(len(timeline))
     id = pick_source_folder()
-    #graph_from_interval_dict(id)
+    graph_from_interval_dict(id)
     return
