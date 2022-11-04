@@ -22,22 +22,23 @@ def create_timeline():
         path = base + '/' + rumourfolder
         if os.path.isdir(path):
             for directory_name in os.listdir(path):
-                if directory_name == EGO:# directory_name = 580319983676313601
-                    direc_path = path + '/' + directory_name
-                    if os.path.isdir(direc_path):
-                        # Loop over the files in that directory.
-                        for file in os.listdir(direc_path + '/source-tweets'):
-                            file_path = os.path.join(direc_path + '/source-tweets', file)
-                            if file == (directory_name + '.json'):  # take only the source tweet file
+                #if directory_name == EGO:# directory_name = 580319983676313601
+                direc_path = path + '/' + directory_name
+                if os.path.isdir(direc_path):
+                    # Loop over the files in that directory.
+                    for file in os.listdir(direc_path + '/source-tweets'):
+                        file_path = os.path.join(direc_path + '/source-tweets', file)
+                        if file == (directory_name + '.json'):  # take only the source tweet file
+                            times.append(scrap_time_from_file(file_path))
+                    if os.path.exists(direc_path + '/reactions'):
+                        for file in os.listdir(direc_path + '/reactions'):
+                            file_path = os.path.join(direc_path + '/reactions', file)
+                            if '_' not in file:  # only take tweets
                                 times.append(scrap_time_from_file(file_path))
-                        if os.path.exists(direc_path + '/reactions'):
-                            for file in os.listdir(direc_path + '/reactions'):
-                                file_path = os.path.join(direc_path + '/reactions', file)
-                                if '_' not in file:  # only take tweets
-                                    times.append(scrap_time_from_file(file_path))
     # sort it by time
     times.sort(key=lambda tup: tup[0])
-
+    print(len(times))
+    print(times[0])
     return times
 
 

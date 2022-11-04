@@ -29,7 +29,7 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
             nrdata = read_data_file('non-rumours')
             if rdata is not None and nrdata is not None:
                 full_dict = dict_append(nrdata, rdata)
-                out_file = open(wd + "/structures/structure-full-dictionary" + ".json", "w")
+                out_file = open(wd + "/accounts/structure-full-dictionary" + ".json", "w")
                 dump(full_dict, out_file, indent="")
             else:
                 print("An error has occured.")
@@ -55,7 +55,7 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
             return create_digraph(fdata)
     return
 def main():
-    g = create_load_structure(True, False, True, True, True)
+    g = create_load_structure(True, False, False, False, True)
     if g is None:
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
