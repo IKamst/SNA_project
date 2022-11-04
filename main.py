@@ -55,7 +55,8 @@ def create_load_structure(CREATE_STRUCTURE_FILES, OPEN_STRUCTURE_FILES, NON_RUMO
             return create_digraph(fdata)
     return
 def main():
-    g = create_load_structure(False, True, True, False, False)
+    FULL=True
+    g = create_load_structure(False, True, False, False, FULL)
     if g is None:
         print("The structure files have been created. Please set OPEN_STRUCTURE_FILES to True.")
     else:
@@ -69,7 +70,8 @@ def main():
         calculate_metrics(g)
         calculate_hits(g)
         community_analysis(g, positioning)
-        longitudinal_analysis()
+        if FULL:
+            longitudinal_analysis()
 
 
 if __name__ == "__main__":
